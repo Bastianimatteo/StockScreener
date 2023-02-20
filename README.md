@@ -1,3 +1,7 @@
 # StockScreener
 
-NEED TO ACTIVATE CORS POLICY! INSTEAD, NETWORK ERROR WILL OCCUR
+NEED TO ACTIVATE CORS POLICY VIA BROWSER EXTENSION!
+INSTEAD, NETWORK ERROR WILL OCCUR
+
+Extension for Chrome:
+https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino
