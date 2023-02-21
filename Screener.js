@@ -141,14 +141,14 @@ for(let i=0, j=0; i<array.length; i++)
                 table();
             }
         }
-    else
-    {
-         if(xhttp[i].status != 200 && err == 0)
-         {
-              console.log("Network error");
-              err++;
-         }
-    }
+        else
+        {
+            if(xhttp[i].status != 200 && err==0)
+            {
+                alert("Network error");
+                err++;
+            }
+        }
     }
     
     xhttp_financial[i].onreadystatechange = function()
