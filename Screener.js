@@ -1,4 +1,4 @@
-array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "JNJ", "NIO", "CSIQ", "MU", "PG", "ASML", "NVS", "NFLX", "QCOM", "SNY", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "BNTX", "META", "INTC", "PARA", "PLUG", "NKLA", "MRNA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM"];
+array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "STLAM.MI", "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "JNJ", "NIO", "CSIQ", "MU", "PG", "ASML", "NVS", "NFLX", "QCOM", "SNY", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "BNTX", "META", "INTC", "PARA", "PLUG", "NKLA", "MRNA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM"];
 
 var xhttp = [];
 var xhttp_financial = [];
