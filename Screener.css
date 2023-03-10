@@ -1,0 +1,24 @@
+#table {text-align: center; font-size: 11px; font-family: sans-serif;}
+th {border: 1px solid grey; position: sticky; top: -1;}
+td {border: 1px solid grey}
+
+.form-control {font-size: 14px; width: 100px; text-align: center;}
+
+#body {display: flex; flex-wrap: wrap}
+#div_right1 {float:left; width: 40%;}
+#div_right2 {float:left; width: 40%; margin-left: 5%;}
+
+/* div_right1 */
+#div_change {position:sticky; top: 20; float:center; margin-top: 10px}
+#div_pe {position:sticky; top: 130; float:center; margin-top: 10px}
+#div_dividend {position:sticky; top: 260; float:center; margin-top: 10px}
+#div_currency {position:sticky; top: 370; float:center; margin-top: 9px}
+
+/* div_right2 */
+#div_debtequity {position: sticky; top:20; float:center; margin-top: 10px}
+#div_grossmargin {position: sticky; top: 130; float:center; margin-top: 10px}
+
+td:first-child {font-weight: bold}
+td:last-child {font-weight: bold}
+
+.clickable {cursor:pointer}
