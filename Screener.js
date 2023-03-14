@@ -383,8 +383,8 @@ function table_crypto()
         var cell_name_crypto = row_crypto.insertCell();
         cell_name_crypto.innerHTML = data_crypto[i].quoteResponse.result[0].shortName;
 
-        var cell_price_crypto = row_crypto.insertCell();
-        cell_price_crypto.innerHTML = (data_crypto[i].quoteResponse.result[0].regularMarketPrice).toFixed(3);
+        var cell_price_crypto = row_crypto.insertCell();    
+        data_crypto[i].regularMarketPrice > 1 ? cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(2) : cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(3);
 
         var cell_change_crypto = row_crypto.insertCell();
         cell_change_crypto.innerHTML = (data_crypto[i].quoteResponse.result[0].regularMarketChangePercent).toFixed(2);
