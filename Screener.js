@@ -1,4 +1,4 @@
-array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA"];
+array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "BLDP", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA"];
 
 array_crypto = ["BTC-USD", "ETH-USD", "CRO-USD", "BNB-USD", "XRP-USD", "ADA-USD"];
 
