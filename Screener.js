@@ -1,61 +1,38 @@
-array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "BLDP", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB"];
+array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB"];
 
 array_crypto = ["BTC-USD", "ETH-USD", "CRO-USD", "BNB-USD", "XRP-USD", "ADA-USD"];
 
 var xhttp = [];
+var xhttp_base = []
 var xhttp_financial = [];
 var xhttp_crypto = [];
 
+var response = [];
+var response_base = []
+var response_financial = [];
+var response_crypto = [];
+
 var data = [];
+var data_base = []
 var data_financial = [];
 var data_crypto = [];
+
+var sorted_data = [];
+var sorted_data_base = []
+var sorted_data_financial = [];
+
+var filtered_data = [];
+var filtered_data_base = []
+var filtered_data_financial = [];
+
 var tb = document.getElementById("tbody");
 var tb_crypto = document.getElementById("tbody_crypto");
 var change_position = 10;
 var change_crypto_position = 2;
 
-var v_name, v_currency, v_price, v_pe, v_pb, v_market_cap, v_dividend, v_gross_margin, v_profit_margin, v_roe, v_debtequity, v_change;
-
-var nome = [];
-var currency = [];
-var price = [];
-var pe = [];
-var market_cap = [];
-var dividend = [];
-var change = [];
-var gross_margin = [];
-var profit_margin = [];
-var debtequity = [];
-var roe = [];
-var pb = [];
-
-var sorted_name = [];
-var sorted_currency = [];
-var sorted_price = [];
-var sorted_pe = [];
-var sorted_market_cap = [];
-var sorted_dividend = [];
-var sorted_change = [];
-var sorted_gross_margin = [];
-var sorted_profit_margin = [];
-var sorted_debtequity = [];
-var sorted_roe = [];
-var sorted_pb = [];
-
-var now_name = [];
-var now_currency = [];
-var now_price = [];
-var now_pe = [];
-var now_market_cap = [];
-var now_dividend = [];
-var now_change = [];
-var now_gross_margin = [];
-var now_profit_margin = [];
-var now_debtequity = [];
-var now_roe = [];
-var now_pb = [];
 
 var mancanti = array.length;
+var mancanti_base = array.length;
 var mancanti_financial = array.length;
 var mancanti_crypto = array_crypto.length;
 var err = 0; //serve per non loggare in console arr.length volte "Network error"
@@ -71,12 +48,16 @@ page_size();
 for(let i=0, j=0; i<array.length; i++)
 {
     xhttp[i] = new XMLHttpRequest();
+    xhttp_base[i] = new XMLHttpRequest();
     xhttp_financial[i] = new XMLHttpRequest();
 
-    xhttp[i].open("GET", "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + array[i]);
+
+    xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=summaryDetail");
+    xhttp_base[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price");
     xhttp_financial[i].open("GET", "https://query1.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=financialData")
 
     xhttp[i].send();
+    xhttp_base[i].send();
     xhttp_financial[i].send();
 
     xhttp[i].onreadystatechange = function()
@@ -85,81 +66,59 @@ for(let i=0, j=0; i<array.length; i++)
         {
             mancanti --;
 
-            data[i] = JSON.parse(xhttp[i].response);
+            response[i] = JSON.parse(xhttp[i].response);
+            data[i] = response[i].quoteSummary.result[0].summaryDetail;
 
-            v_name = data[i].quoteResponse.result[0].longName;
-            if(v_name.length > 35)
-            {
-                v_name = data[i].quoteResponse.result[0].shortName;
-            }
+            console.log(data[i])
 
-            if(data[i].quoteResponse.result[0].currency)
+            if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
             {
-                v_currency = data[i].quoteResponse.result[0].currency;
-            }
-            else
-            {
-                v_currency = "EUR";
-            }
 
-            v_price = data[i].quoteResponse.result[0].regularMarketPrice;
-
-            if(data[i].quoteResponse.result[0].trailingPE)
-            {
-                v_pe = data[i].quoteResponse.result[0].trailingPE;
-            }   
-            else
-            {
-                v_pe = 0;
-            }
-
-            if(data[i].quoteResponse.result[0].priceToBook)
-            {
-                v_pb = data[i].quoteResponse.result[0].priceToBook;
-            }
-            else
-            {
-                v_pb = 0;
-            }
-
-            if(data[i].quoteResponse.result[0].marketCap)
-            {
-                v_market_cap = data[i].quoteResponse.result[0].marketCap;
-            }
-            else
-            {
-                v_market_cap = 0;
-            }
-
-            if(data[i].quoteResponse.result[0].trailingAnnualDividendYield)
-            {
-                v_dividend = (data[i].quoteResponse.result[0].
-                trailingAnnualDividendYield)*100;
-            }
-            else
-            {
-                v_dividend = "0";
-            }
-
-            v_change = data[i].quoteResponse.result[0].regularMarketChangePercent;
-
-            add(i, v_name, v_currency, v_price, v_pe, v_pb, v_market_cap, v_dividend, v_change);
-
-            if(mancanti == 0 && mancanti_financial == 0)
-            {
+                //check_zero();
+                sorted_data = data
+                sorted_data_base = data_base
+                sorted_data_financial = data_financial
                 full = true;
                 sort("change");
-                table();
             }
         }
         else
         {
             if(xhttp[i].status != 200 && err==0)
             {
-                alert("Network error");
+                alert("Network error summaryDetail");
                 err++;
             }
         }
+    }
+
+    xhttp_base[i].onreadystatechange = function()
+    {
+        if(xhttp_base[i].status == 200 && xhttp_base[i].readyState ==4)
+        {
+            mancanti_base --;
+
+            response_base[i] = JSON.parse(xhttp_base[i].response);
+            data_base[i] = response_base[i].quoteSummary.result[0].price;
+
+            if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
+            {
+                //check_zero();
+                sorted_data = data
+                sorted_data_base = data_base
+                sorted_data_financial = data_financial
+                full = true;
+                sort("change");
+            }
+        }
+        // else
+        // {
+        //     if(xhttp[i].status != 200 && err==0)
+        //     {
+        //         alert("Network error price");
+        //         err++;
+        //     }
+        // }
     }
     
     xhttp_financial[i].onreadystatechange = function()
@@ -167,142 +126,75 @@ for(let i=0, j=0; i<array.length; i++)
         if(xhttp_financial[i].status == 200 && xhttp_financial[i].readyState ==4)
         {
             mancanti_financial --;
-            data_financial[i] = JSON.parse(xhttp_financial[i].response);
-
-            if(data_financial[i].quoteSummary.result[0].financialData.grossMargins.raw)
-            {
-                v_gross_margin = (data_financial[i].quoteSummary.result[0].financialData.grossMargins.raw)*100;
-            }
-            else
-            {
-                v_gross_margin = 0;
-            }
-
-            if(data_financial[i].quoteSummary.result[0].financialData.profitMargins.raw)
-            {
-                v_profit_margin = (data_financial[i].quoteSummary.result[0].financialData.profitMargins.raw)*100;
-            }
-            else
-            {
-                v_profit_margin = 0;
-            }
-
-
-            if(data_financial[i].quoteSummary.result[0].financialData.debtToEquity.raw)
-            {
-                v_debtequity = (data_financial[i].quoteSummary.result[0].financialData.debtToEquity.raw)/100;
-            }   
-            else
-            {
-                v_debtequity = 0;
-            }
-
-            if(data_financial[i].quoteSummary.result[0].financialData.returnOnEquity.raw)
-            { 
-                v_roe = (data_financial[i].quoteSummary.result[0].financialData.returnOnEquity.raw)*100;
-            }
-            else
-            {
-                v_roe = 0;
-            }
-
-            add_financial(i, v_gross_margin, v_profit_margin, v_debtequity, v_roe);
+            response_financial[i] = JSON.parse(xhttp_financial[i].response);
+            data_financial[i] = response_financial[i].quoteSummary.result[0].financialData;
             
-            if(mancanti == 0 && mancanti_financial == 0)
+            if(mancanti == 0 && mancanti_base == 0 && mancanti_financial == 0)
             {
+                //check_zero();
+                sorted_data = data
+                sorted_data_base = data_base
+                sorted_data_financial = data_financial
                 full = true;
                 sort("change");
-                table();
             }
         }
     }
 }
 
-for(let i= 0; i<array_crypto.length; i++)
-    {
-        xhttp_crypto[i] = new XMLHttpRequest();
-        xhttp_crypto[i].open("GET", "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + array_crypto[i]);
-        xhttp_crypto[i].send();
+// for(let i= 0; i<array_crypto.length; i++)
+//     {
+//         xhttp_crypto[i] = new XMLHttpRequest();
+//         xhttp_crypto[i].open("GET", "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + array_crypto[i]);
+//         xhttp_crypto[i].send();
 
-        xhttp_crypto[i].onreadystatechange = function()
-        {
-            if(xhttp_crypto[i].status == 200 && xhttp_crypto[i].readyState ==4)
-            {
-                mancanti_crypto --;
-                data_crypto[i] = JSON.parse(xhttp_crypto[i].response);
+//         xhttp_crypto[i].onreadystatechange = function()
+//         {
+//             if(xhttp_crypto[i].status == 200 && xhttp_crypto[i].readyState ==4)
+//             {
+//                 mancanti_crypto --;
+//                 response_crypto[i] = JSON.parse(xhttp_crypto[i].response);
+//                 data_crypto[i] = response_crypto[i].quoteResponse.result[0];
 
-                if(mancanti_crypto == 0)
-                {
-                    table_crypto();
-                }
-            }
-        }
-    }
+//                 if(mancanti_crypto == 0)
+//                 {
+//                     table_crypto();
+//                 }
+//             }
+//         }
+//     }
 
 ////////////////////////////////////////////
 
-function add(i, v_name, v_currency, v_price, v_pe, v_pb, v_market_cap, v_dividend, v_change)
-{
-    nome[i] = v_name;
-    currency[i] = v_currency;
-    price[i] = v_price;
-    pe[i] = v_pe;
-    pb[i] = v_pb;
-    market_cap[i] = v_market_cap;
-    dividend[i] = v_dividend;
-    change[i] = v_change;
-
-    now_name[i] = v_name
-    now_currency[i] = v_currency;
-    now_price[i] = v_price;
-    now_pe[i] = v_pe;
-    now_pb[i] = v_pb;
-    now_market_cap[i] = v_market_cap;
-    now_dividend[i] = v_dividend;
-    now_change[i] = v_change;
-}
-
-function add_financial(i, v_gross_margin, v_profit_margin, v_debtequity, v_roe)
-{
-    gross_margin[i] = v_gross_margin;
-    profit_margin[i] = v_profit_margin;
-    debtequity[i] = v_debtequity;
-    roe[i] = v_roe;
-
-    now_gross_margin[i] = v_gross_margin;
-    now_profit_margin[i] = v_profit_margin;
-    now_debtequity[i] = v_debtequity;
-    now_roe[i] = v_roe;
-}
 
 function table()
 {      
     tb.innerHTML = "";
 
-    for(let i=0; i<now_name.length; i++)
+    for(let i=0; i<sorted_data.length; i++)
     {
         var row = tb.insertRow();
 
         var cell_name = row.insertCell();
-        cell_name.innerHTML = sorted_name[i];
+        cell_name.innerHTML = sorted_data_base[i].shortName;
 
         var cell_price = row.insertCell();
-        cell_price.innerHTML = sorted_price[i].toFixed(2);
+        cell_price.innerHTML = sorted_data_financial[i].currentPrice.raw.toFixed(2);
 
         var cell_market_cap = row.insertCell();
-        if(sorted_market_cap[i] != 0)
+        if(sorted_data_base[i].marketCap)
         {
-            cell_market_cap.innerHTML = (sorted_market_cap[i]/1000000000).toFixed(2) + " mld";  
-        }              
+            cell_market_cap.innerHTML = (sorted_data_base[i].marketCap.raw/1000000000).toFixed(2) + " mld";  
+        }
         else
         {
             cell_market_cap.innerHTML = "-";
         }
 
         var cell_gross_margin = row.insertCell();
-        if(sorted_gross_margin[i] != 0)
+        if(sorted_data_financial[i].grossMargins)
         {
-            cell_gross_margin.innerHTML = sorted_gross_margin[i].toFixed(2) + " %";
+            cell_gross_margin.innerHTML = (sorted_data_financial[i].grossMargins.raw *100).toFixed(2) + " %";
         }              
         else
         {
@@ -310,9 +202,9 @@ function table()
         }
 
         var cell_profit_margin = row.insertCell();
-        if(sorted_profit_margin[i] != 0)
+        if(sorted_data_financial[i].profitMargins)
         {
-            cell_profit_margin.innerHTML = (sorted_profit_margin[i]).toFixed(2) + " %";
+            cell_profit_margin.innerHTML = (sorted_data_financial[i].profitMargins.raw *100).toFixed(2) + " %";
         }              
         else
         {
@@ -320,12 +212,19 @@ function table()
         }
 
         var cell_roe = row.insertCell();
-        cell_roe.innerHTML = (sorted_roe[i]).toFixed(2) + " %";
+        if(sorted_data_financial[i].returnOnEquity)
+        {
+            cell_roe.innerHTML = (sorted_data_financial[i].returnOnEquity.raw *100).toFixed(2) + " %";
+        }
+        else
+        {
+            cell_roe.innerHTML = "-";
+        }
 
         var cell_debtequity = row.insertCell();
-        if(sorted_debtequity[i] != 0)
+        if(sorted_data_financial[i].debtToEquity)
         {
-            cell_debtequity.innerHTML = (sorted_debtequity[i]).toFixed(2);  
+            cell_debtequity.innerHTML = (sorted_data_financial[i].debtToEquity.raw /100).toFixed(2);
         }
         else
         {
@@ -333,9 +232,9 @@ function table()
         }
 
         var cell_dividend = row.insertCell();
-        if(sorted_dividend[i] != 0)
+        if(sorted_data[i].trailingAnnualDividendYield)
         {
-            cell_dividend.innerHTML = sorted_dividend[i].toFixed(2) + " %";                
+            cell_dividend.innerHTML = (sorted_data[i].dividendYield.raw *100).toFixed(2) + " %";                
         }
         else
         {
@@ -343,9 +242,9 @@ function table()
         }
 
         var cell_pe = row.insertCell();
-        if(sorted_pe[i] != 0)
+        if(sorted_data[i].trailingPE)
         {
-            cell_pe.innerHTML = sorted_pe[i].toFixed(2);
+            cell_pe.innerHTML = (sorted_data[i].trailingPE.raw).toFixed(2);
         }
         else
         {
@@ -353,10 +252,25 @@ function table()
         }
 
         var cell_pb = row.insertCell();
-        cell_pb.innerHTML = sorted_pb[i].toFixed(2);
+        if(sorted_data[i].priceToBook)
+        {
+            cell_pb.innerHTML = (sorted_data[i].priceToBook.raw).toFixed(2);
+        }
+        else
+        {
+            cell_pb.innerHTML = "-";
+        }
+
 
         var cell_change = row.insertCell();
-        cell_change.innerHTML = sorted_change[i].toFixed(2);
+        if(sorted_data_base[i].regularMarketChangePercent)
+        {
+            cell_change.innerHTML = (sorted_data_base[i].regularMarketChangePercent.raw *100).toFixed(2);
+        }
+        else
+        {
+            cell_change.innerHTML = "-";
+        }
     }
         
     colors();
@@ -381,13 +295,13 @@ function table_crypto()
         var row_crypto = tb_crypto.insertRow();
 
         var cell_name_crypto = row_crypto.insertCell();
-        cell_name_crypto.innerHTML = data_crypto[i].quoteResponse.result[0].shortName;
+        cell_name_crypto.innerHTML = data_crypto[i].shortName;
 
         var cell_price_crypto = row_crypto.insertCell();    
-        data_crypto[i].quoteResponse.result[0].regularMarketPrice > 1 ? (cell_price_crypto.innerHTML = (data_crypto[i].quoteResponse.result[0].regularMarketPrice).toFixed(2)) : (cell_price_crypto.innerHTML = (data_crypto[i].quoteResponse.result[0].regularMarketPrice).toFixed(3));
+        data_crypto[i].regularMarketPrice > 1 ? (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(2)) : (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(3));
 
         var cell_change_crypto = row_crypto.insertCell();
-        cell_change_crypto.innerHTML = (data_crypto[i].quoteResponse.result[0].regularMarketChangePercent).toFixed(2);
+        cell_change_crypto.innerHTML = (data_crypto[i].regularMarketChangePercent).toFixed(2);
     }
 
     colors_crypto();
@@ -441,207 +355,108 @@ function sort(arr)
 {
     if(full == true)
     {
-        empty_sorted();
-
         switch(arr)
         {
             case "change":
                 {
-                    indices = Array.from(now_change.keys()).sort((a, b) => (now_change[a] - now_change[b]));
-                    break;
-                }
-            case "currency":
-                {
-                    indices = Array.from(now_currency.keys()).sort((a, b) => (now_currency[a] - now_currency[b]));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].regularMarketChangePercent - sorted_data[b].regularMarketChangePercent));
                     break;
                 }
             case "market_cap":
                 {
-                    indices = Array.from(now_market_cap.keys()).sort((a, b) => (now_market_cap[a] - now_market_cap[b]));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].marketCap - sorted_data[b].marketCap));
                     break;
                 }
             case "gross_margin":
                 {
-                    indices = Array.from(now_gross_margin.keys()).sort((a, b) => (now_gross_margin[a] - now_gross_margin[b]));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].grossMargins.raw - sorted_data_financial[b].grossMargins.raw));
                     break;
                 }
             case "profit_margin":
                 {
-                    indices = Array.from(now_profit_margin.keys()).sort((a, b) => (now_profit_margin[a] - now_profit_margin[b]));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].profitMargins.raw - sorted_data_financial[b].profitMargins.raw));
                     break;
                 }
             case "debtequity":
                 {
-                    indices = Array.from(now_debtequity.keys()).sort((a, b) => (now_debtequity[a] - now_debtequity[b]));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].debtToEquity.raw - sorted_data_financial[b].debtToEquity.raw));
                     break;
                 }
             case "dividend":
                 {
-                    indices = Array.from(now_dividend.keys()).sort((a, b) => (now_dividend[a] - now_dividend[b]));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].trailingAnnualDividendYield - sorted_data[b].trailingAnnualDividendYield));
                     break;
                 }
             case "pe":
                 {
-                    indices = Array.from(now_pe.keys()).sort((a, b) => (now_pe[a] - now_pe[b]));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].trailingPE - sorted_data[b].trailingPE));
                     break;
                 }
             case "roe":
                 {
-                    indices = Array.from(now_roe.keys()).sort((a, b) => (now_roe[a] - now_roe[b]));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].returnOnEquity.raw - sorted_data_financial[b].returnOnEquity.raw));
                     break;
                 }
             case "pb":
                 {
-                    indices = Array.from(now_pb.keys()).sort((a,b) => (now_pb[a] - now_pb[b]));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].priceToBook - sorted_data[b].priceToBook));
                     break;
                 }
         }
 
-        sorted_name = indices.map(i => now_name[i]);
-        sorted_currency = indices.map(i => now_currency[i]);
-        sorted_price = indices.map(i => now_price[i]);
-        sorted_market_cap = indices.map(i => now_market_cap[i]);
-        sorted_gross_margin = indices.map(i => now_gross_margin[i]);
-        sorted_profit_margin = indices.map(i => now_profit_margin[i]);
-        sorted_roe = indices.map(i => now_roe[i]);
-        sorted_debtequity = indices.map(i => now_debtequity[i]);
-        sorted_pe = indices.map(i => now_pe[i]);
-        sorted_pb = indices.map(i => now_pb[i]);
-        sorted_dividend = indices.map(i => now_dividend[i]);
-        sorted_change = indices.map(i => now_change[i]);
+        let tmp = sorted_data
+        let tmp_financial = sorted_data_financial
 
-        var tb = document.getElementById("tbody");
-        tb.innerHTML = "";
-        
+        sorted_data = [];
+        sorted_data_financial = [];
+
+        sorted_data = indices.map(i => tmp[i]);
+        sorted_data_financial = indices.map(i => tmp_financial[i]);
+
         table();
     }
 }
 
-function empty_sorted()
-{
-    sorted_name = [];
-    sorted_currency = [];
-    sorted_price = [];
-    sorted_pe = [];
-    sorted_pb = [];
-    sorted_market_cap = [];
-    sorted_dividend = [];
-    sorted_change = [];
-    sorted_gross_margin = [];
-    sorted_profit_margin = [];
-    sorted_debtequity = [];
-    sorted_roe = [];
-}
-
-function empty_now()
-{
-    now_name = [];
-    now_currency = [];
-    now_price = [];
-    now_pe = [];
-    now_pb = [];
-    now_market_cap = [];
-    now_dividend = [];
-    now_change = [];
-    now_gross_margin = [];
-    now_profit_margin = [];
-    now_debtequity = [];
-    now_roe = [];
-}
-
-function now_sorted()
-{
-    now_name = sorted_name;
-    now_currency = sorted_currency;
-    now_price = sorted_price;
-    now_market_cap = sorted_market_cap;
-    now_gross_margin = sorted_gross_margin;
-    now_profit_margin = sorted_profit_margin;
-    now_roe = sorted_roe;
-    now_debtequity = sorted_debtequity;
-    now_dividend = sorted_dividend;
-    now_pe = sorted_pe;
-    now_pb = sorted_pb;
-    now_change = sorted_change;
-}
-
-function now_sorted_ij(i, j)
-{
-    now_name[j] = nome[i];
-    now_currency[j] = currency[i];
-    now_price[j] = price[i];
-    now_market_cap[j] = market_cap[i];
-    now_gross_margin[j] = gross_margin[i];
-    now_profit_margin[j] = profit_margin[i];
-    now_roe[j] = roe[i];
-    now_debtequity[j] = debtequity[i];
-    now_dividend[j] = dividend[i];
-    now_pe[j] = pe[i];
-    now_pb[j] = pb[i];
-    now_change[j] = change[i];
-}
-
-function sorted_now_ij(i, j)
-{
-    sorted_name[j] = now_name[i];
-    sorted_currency[j] = now_currency[i];
-    sorted_price[j] = now_price[i];
-    sorted_market_cap[j] = now_market_cap[i];
-    sorted_gross_margin[j] = now_gross_margin[i];
-    sorted_profit_margin[j] = now_profit_margin[i];
-    sorted_roe[j] = now_roe[i];
-    sorted_debtequity[j] = now_debtequity[i];
-    sorted_dividend[j] = now_dividend[i];
-    sorted_pe[j] = now_pe[i];
-    sorted_pb[j] = now_pb[i];
-    sorted_change[j] = now_change[i];
-}
-
 function filter()
 {
+    let tmp = [], tmp_fin= []
+
+    sorted_data = data
+    sorted_data_financial = data_financial
+
     const val_change = document.getElementById("filter_change").value;
     const val_pe = document.getElementById("filter_pe").value;
     const val_dividend = document.getElementById("filter_dividend").value;
-    const val_currency = document.getElementById("filter_currency").value;
     const val_debtequity = document.getElementById("filter_debtequity").value;
     const val_grossmargin = document.getElementById("filter_grossmargin").value;
-
-    now_name = nome;
-    now_currency = currency;
-    now_price = price;
-    now_pe = pe;
-    now_pb = pb;
-    now_market_cap = market_cap;
-    now_gross_margin = gross_margin;
-    now_profit_margin = profit_margin;
-    now_roe = roe;
-    now_debtequity = debtequity;
-    now_dividend = dividend;
-    now_change = change;
 
     switch (val_change){
         case "pos":
         {
-            empty_now();
-            for(let i=0, j=-1; i<nome.length; i++)
+            sorted_data = []
+            sorted_data_financial = []
+
+            for(let i=0; i<data.length; i++)
             {
-                if(change[i] >= 0)
+                if(data[i].regularMarketChangePercent >= 0)
                 {
-                    j++;
-                    now_sorted_ij(i,j);
+                    sorted_data.push(data[i])
+                    sorted_data_financial.push(data_financial[i])     
                 }
             }
             break;
         }
         case "neg":
         {
-            empty_now();
-            for(let i=0, j=-1; i<nome.length; i++)
+            sorted_data = []
+            sorted_data_financial = []
+
+            for(let i=0; i<data.length; i++)
             {
-                if(change[i] < 0)
+                if(data[i].regularMarketChangePercent < 0)
                 {
-                    j++;
-                    now_sorted_ij(i,j);
+                    sorted_data.push(data[i])
+                    sorted_data_financial.push(data_financial[i]) 
                 }
             }
             break;
@@ -652,52 +467,53 @@ function filter()
         }
     }
 
-    empty_sorted();
+    tmp = []
+    tmp_fin = []
 
     switch(val_pe)
     {
         case "no":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data.length; i++)
             {
-                if(now_pe[i] == "0")
+                if(sorted_data[i].trailingPE == "0")
                 {
-                    j++;
-                    sorted_now_ij(i, j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])
                 }
             }
-
-            now_sorted();
             break;
         }
 
         case "pos":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data.length; i++)
             {
-                if(now_pe[i] != "0")
+                if(sorted_data[i].trailingPE != "0")
                 {
-                    j++;
-                    sorted_now_ij(i, j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])  
                 }
             }
 
-            now_sorted();
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
 
         case "pos2":
         {
-            for(let i=0, j= -1; i<now_pe.length; i++)
+            for(let i=0; i<sorted_data.length; i++)
             {
-                if(now_pe[i] > 0 && now_pe[i] < 15)
+                if(sorted_data[i].trailingPE > 0 && sorted_data[i].trailingPE < 15)
                 {
-                    j++;
-                    sorted_now_ij(i, j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])  
                 }
             }
 
-            now_sorted();
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
 
@@ -707,37 +523,41 @@ function filter()
         }
     }
 
-    empty_sorted();
+    tmp = []
+    tmp_fin = []
 
     switch(val_dividend)
     {
         case "no":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data.length; i++)
             {
-                if(now_dividend[i] == "0")
+                if(sorted_data[i].trailingAnnualDividendYield == "0.0")
                 {
-                    j++;
-                    sorted_now_ij(i, j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])
                 }
             }
 
-            now_sorted();
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
 
         case "si":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            console.log("si")
+            for(let i=0; i<sorted_data.length; i++)
             {
-                if(now_dividend[i] != "0")
+                if(sorted_data[i].trailingAnnualDividendYield != "0.0")
                 {
-                    j++;
-                    sorted_now_ij(i, j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i]) 
                 }
             }
 
-            now_sorted();
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
 
@@ -747,73 +567,38 @@ function filter()
         }
     }
 
-    empty_sorted();
-
-    switch(val_currency)
-    {
-        case "EUR":
-        {
-            for(let i=0, j=-1; i<now_name.length; i++)
-            {
-                if(now_currency[i] == "EUR")
-                {
-                    j++;
-                    sorted_now_ij(i, j);
-                }
-            }
-
-            now_sorted();
-            break;
-        }
-
-        case "USD":
-        {
-            for(let i=0, j=-1; i<now_name.length; i++)
-            {
-                if(now_currency[i] == "USD")
-                {
-                    j++;
-                    sorted_now_ij(i, j);
-                }
-            }
-
-            now_sorted();
-            break;
-        }
-
-        case "empty":
-        {
-            break;
-        }
-    }
-
-    empty_sorted();
+    tmp = []
+    tmp_fin = []
 
     switch (val_debtequity){
         case "min":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(now_debtequity[i] <= 0.5)
+                if(sorted_data_financial[i].debtToEquity.raw <= 0.5)
                 {
-                    j++;
-                    sorted_now_ij(i,j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])
                 }
             }
-            now_sorted();
+
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
         case "magg":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(now_debtequity[i] > 0.5)
+                if(sorted_data_financial[i].debtToEquity > 0.5)
                 {
-                    j++;
-                    sorted_now_ij(i,j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i]) 
                 }
             }
-            now_sorted();
+
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
         case "empty":
@@ -822,33 +607,38 @@ function filter()
         }
     }
 
-    empty_sorted();
+    tmp = []
+    tmp_fin = []
 
     switch (val_grossmargin){
         case "pos":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(now_gross_margin[i] >= 0)
+                if(sorted_data_financial[i].grossMargins.raw >= 0)
                 {
-                    j++;
-                    sorted_now_ij(i,j);
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])           
                 }
             }
-            now_sorted();
+
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
         case "neg":
         {
-            for(let i=0, j=-1; i<now_name.length; i++)
+            for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(now_gross_margin[i] < 0)
-                {
-                    j++;
-                    sorted_now_ij(i,j);
+                if(sorted_data_financial[i].grossMargins.raw < 0)
+                {     
+                    tmp.push(sorted_data[i])
+                    tmp_fin.push(sorted_data_financial[i])
                 }
             }
-            now_sorted();
+
+            sorted_data = tmp
+            sorted_data_financial = tmp_fin
             break;
         }
         case "empty":
@@ -857,10 +647,33 @@ function filter()
         }
     }
 
-    empty_sorted();
+    tmp = []
+    tmp_fin = []
 
     sort("change");
     table();
+}
+
+
+function check_zero()
+{
+    for (let i = 0; i < data.length; i++) 
+    {
+        const obj = data[i];
+        if(!obj.trailingAnnualDividendYield)
+            obj.trailingAnnualDividendYield = 0
+        if(!obj.trailingPE)
+            obj.trailingPE = 0
+    }
+
+    for (let i = 0; i < data_financial.length; i++) 
+    {
+        const obj = data_financial[i];
+        if(!obj.returnOnEquity.raw)
+            obj.returnOnEquity.raw = 0
+        if(!obj.debtToEquity.raw)
+            obj.debtToEquity.raw = 0
+    }
 }
 
 function page_size()
