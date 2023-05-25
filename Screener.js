@@ -69,12 +69,8 @@ for(let i=0, j=0; i<array.length; i++)
             response[i] = JSON.parse(xhttp[i].response);
             data[i] = response[i].quoteSummary.result[0].summaryDetail;
 
-            console.log(data[i])
-
             if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
             {
-
-                //check_zero();
                 sorted_data = data
                 sorted_data_base = data_base
                 sorted_data_financial = data_financial
@@ -103,7 +99,6 @@ for(let i=0, j=0; i<array.length; i++)
 
             if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
             {
-                //check_zero();
                 sorted_data = data
                 sorted_data_base = data_base
                 sorted_data_financial = data_financial
@@ -111,14 +106,6 @@ for(let i=0, j=0; i<array.length; i++)
                 sort("change");
             }
         }
-        // else
-        // {
-        //     if(xhttp[i].status != 200 && err==0)
-        //     {
-        //         alert("Network error price");
-        //         err++;
-        //     }
-        // }
     }
     
     xhttp_financial[i].onreadystatechange = function()
@@ -131,7 +118,6 @@ for(let i=0, j=0; i<array.length; i++)
             
             if(mancanti == 0 && mancanti_base == 0 && mancanti_financial == 0)
             {
-                //check_zero();
                 sorted_data = data
                 sorted_data_base = data_base
                 sorted_data_financial = data_financial
@@ -142,27 +128,27 @@ for(let i=0, j=0; i<array.length; i++)
     }
 }
 
-// for(let i= 0; i<array_crypto.length; i++)
-//     {
-//         xhttp_crypto[i] = new XMLHttpRequest();
-//         xhttp_crypto[i].open("GET", "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + array_crypto[i]);
-//         xhttp_crypto[i].send();
+for(let i= 0; i<array_crypto.length; i++)
+    {
+        xhttp_crypto[i] = new XMLHttpRequest();
+        xhttp_crypto[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array_crypto[i] + "?modules=price");
+        xhttp_crypto[i].send();
 
-//         xhttp_crypto[i].onreadystatechange = function()
-//         {
-//             if(xhttp_crypto[i].status == 200 && xhttp_crypto[i].readyState ==4)
-//             {
-//                 mancanti_crypto --;
-//                 response_crypto[i] = JSON.parse(xhttp_crypto[i].response);
-//                 data_crypto[i] = response_crypto[i].quoteResponse.result[0];
+        xhttp_crypto[i].onreadystatechange = function()
+        {
+            if(xhttp_crypto[i].status == 200 && xhttp_crypto[i].readyState ==4)
+            {
+                mancanti_crypto --;
+                response_crypto[i] = JSON.parse(xhttp_crypto[i].response);
+                data_crypto[i] = response_crypto[i].quoteSummary.result[0].price;
 
-//                 if(mancanti_crypto == 0)
-//                 {
-//                     table_crypto();
-//                 }
-//             }
-//         }
-//     }
+                if(mancanti_crypto == 0)
+                {
+                    table_crypto();
+                }
+            }
+        }
+    }
 
 ////////////////////////////////////////////
 
@@ -212,7 +198,7 @@ function table()
         }
 
         var cell_roe = row.insertCell();
-        if(sorted_data_financial[i].returnOnEquity)
+        if(sorted_data_financial[i].returnOnEquity?.raw)
         {
             cell_roe.innerHTML = (sorted_data_financial[i].returnOnEquity.raw *100).toFixed(2) + " %";
         }
@@ -222,7 +208,7 @@ function table()
         }
 
         var cell_debtequity = row.insertCell();
-        if(sorted_data_financial[i].debtToEquity)
+        if(sorted_data_financial[i].debtToEquity?.raw)
         {
             cell_debtequity.innerHTML = (sorted_data_financial[i].debtToEquity.raw /100).toFixed(2);
         }
@@ -232,7 +218,7 @@ function table()
         }
 
         var cell_dividend = row.insertCell();
-        if(sorted_data[i].trailingAnnualDividendYield)
+        if(sorted_data[i].trailingAnnualDividendYield?.raw)
         {
             cell_dividend.innerHTML = (sorted_data[i].dividendYield.raw *100).toFixed(2) + " %";                
         }
@@ -242,7 +228,7 @@ function table()
         }
 
         var cell_pe = row.insertCell();
-        if(sorted_data[i].trailingPE)
+        if(sorted_data[i].trailingPE?.raw)
         {
             cell_pe.innerHTML = (sorted_data[i].trailingPE.raw).toFixed(2);
         }
@@ -298,10 +284,10 @@ function table_crypto()
         cell_name_crypto.innerHTML = data_crypto[i].shortName;
 
         var cell_price_crypto = row_crypto.insertCell();    
-        data_crypto[i].regularMarketPrice > 1 ? (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(2)) : (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice).toFixed(3));
+        data_crypto[i].regularMarketPrice.raw > 1 ? (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice.raw).toFixed(2)) : (cell_price_crypto.innerHTML = (data_crypto[i].regularMarketPrice.raw).toFixed(3));
 
         var cell_change_crypto = row_crypto.insertCell();
-        cell_change_crypto.innerHTML = (data_crypto[i].regularMarketChangePercent).toFixed(2);
+        cell_change_crypto.innerHTML = (data_crypto[i].regularMarketChangePercent.raw *100).toFixed(2);
     }
 
     colors_crypto();
@@ -652,28 +638,6 @@ function filter()
 
     sort("change");
     table();
-}
-
-
-function check_zero()
-{
-    for (let i = 0; i < data.length; i++) 
-    {
-        const obj = data[i];
-        if(!obj.trailingAnnualDividendYield)
-            obj.trailingAnnualDividendYield = 0
-        if(!obj.trailingPE)
-            obj.trailingPE = 0
-    }
-
-    for (let i = 0; i < data_financial.length; i++) 
-    {
-        const obj = data_financial[i];
-        if(!obj.returnOnEquity.raw)
-            obj.returnOnEquity.raw = 0
-        if(!obj.debtToEquity.raw)
-            obj.debtToEquity.raw = 0
-    }
 }
 
 function page_size()
