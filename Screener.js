@@ -82,7 +82,7 @@ for(let i=0, j=0; i<array.length; i++)
         {
             if(xhttp[i].status != 200 && err==0)
             {
-                alert("Network error summaryDetail");
+                alert("Network error. AGGIORNA LA PAGINA");
                 err++;
             }
         }
@@ -345,58 +345,61 @@ function sort(arr)
         {
             case "change":
                 {
-                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].regularMarketChangePercent - sorted_data[b].regularMarketChangePercent));
+                    indices = Array.from(Object.keys(sorted_data_base)).sort((a, b) => ((sorted_data_base[a].regularMarketChangePercent?.raw || 0) - (sorted_data_base[b].regularMarketChangePercent?.raw || 0)));
                     break;
                 }
             case "market_cap":
                 {
-                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].marketCap - sorted_data[b].marketCap));
+                    indices = Array.from(Object.keys(sorted_data_base)).sort((a, b) => ((sorted_data_base[a].marketCap?.raw || 0) - (sorted_data_base[b].marketCap?.raw || 0)));
                     break;
                 }
             case "gross_margin":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].grossMargins.raw - sorted_data_financial[b].grossMargins.raw));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].grossMargins?.raw || 0) - (sorted_data_financial[b].grossMargins?.raw || 0)));
                     break;
                 }
             case "profit_margin":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].profitMargins.raw - sorted_data_financial[b].profitMargins.raw));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].profitMargins?.raw || 0) - (sorted_data_financial[b].profitMargins?.raw || 0)));
                     break;
                 }
             case "debtequity":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].debtToEquity.raw - sorted_data_financial[b].debtToEquity.raw));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (((sorted_data_financial[a].debtToEquity?.raw || 0) - sorted_data_financial[b].debtToEquity?.raw || 0)));
                     break;
                 }
             case "dividend":
                 {
-                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].trailingAnnualDividendYield - sorted_data[b].trailingAnnualDividendYield));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => ((sorted_data[a].trailingAnnualDividendYield?.raw || 0) - (sorted_data[b].trailingAnnualDividendYield?.raw || 0)));
                     break;
                 }
             case "pe":
                 {
-                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].trailingPE - sorted_data[b].trailingPE));
+                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => ((sorted_data[a].trailingPE?.raw || 0) - (sorted_data[b].trailingPE?.raw || 0)));
                     break;
                 }
             case "roe":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (sorted_data_financial[a].returnOnEquity.raw - sorted_data_financial[b].returnOnEquity.raw));
+                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].returnOnEquity?.raw || 0) - (sorted_data_financial[b].returnOnEquity?.raw || 0)));
                     break;
                 }
-            case "pb":
-                {
-                    indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].priceToBook - sorted_data[b].priceToBook));
-                    break;
-                }
+            // case "pb":
+            //     {
+            //         indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].priceToBook - sorted_data[b].priceToBook));
+            //         break;
+            //     }
         }
 
         let tmp = sorted_data
+        let tmp_base = sorted_data_base
         let tmp_financial = sorted_data_financial
 
         sorted_data = [];
+        sorted_data_base = []
         sorted_data_financial = [];
 
         sorted_data = indices.map(i => tmp[i]);
+        sorted_data_base = indices.map(i => tmp_base[i])
         sorted_data_financial = indices.map(i => tmp_financial[i]);
 
         table();
@@ -405,9 +408,10 @@ function sort(arr)
 
 function filter()
 {
-    let tmp = [], tmp_fin= []
+    let tmp = [], tmp_base = [], tmp_fin= []
 
     sorted_data = data
+    sorted_data_base = data_base
     sorted_data_financial = data_financial
 
     const val_change = document.getElementById("filter_change").value;
@@ -420,13 +424,15 @@ function filter()
         case "pos":
         {
             sorted_data = []
+            sorted_data_base = []
             sorted_data_financial = []
 
             for(let i=0; i<data.length; i++)
             {
-                if(data[i].regularMarketChangePercent >= 0)
+                if((data_base[i].regularMarketChangePercent?.raw || 0) >= 0)
                 {
                     sorted_data.push(data[i])
+                    sorted_data_base.push(data_base[i]) 
                     sorted_data_financial.push(data_financial[i])     
                 }
             }
@@ -435,13 +441,15 @@ function filter()
         case "neg":
         {
             sorted_data = []
+            sorted_data_base = []
             sorted_data_financial = []
 
             for(let i=0; i<data.length; i++)
             {
-                if(data[i].regularMarketChangePercent < 0)
+                if((data_base[i].regularMarketChangePercent?.raw || 0) < 0)
                 {
                     sorted_data.push(data[i])
+                    sorted_data_base.push(data_base[i]) 
                     sorted_data_financial.push(data_financial[i]) 
                 }
             }
@@ -454,6 +462,7 @@ function filter()
     }
 
     tmp = []
+    tmp_base = []
     tmp_fin = []
 
     switch(val_pe)
@@ -462,12 +471,17 @@ function filter()
         {
             for(let i=0; i<sorted_data.length; i++)
             {
-                if(sorted_data[i].trailingPE == "0")
+                if(!(sorted_data[i].trailingPE))
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])
                 }
             }
+            
+            sorted_data = tmp
+            sorted_data_base = tmp_base
+            sorted_data_financial = tmp_fin
             break;
         }
 
@@ -475,14 +489,16 @@ function filter()
         {
             for(let i=0; i<sorted_data.length; i++)
             {
-                if(sorted_data[i].trailingPE != "0")
+                if((sorted_data[i].trailingPE?.raw || 0) != "0")
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])  
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -491,14 +507,16 @@ function filter()
         {
             for(let i=0; i<sorted_data.length; i++)
             {
-                if(sorted_data[i].trailingPE > 0 && sorted_data[i].trailingPE < 15)
+                if((sorted_data[i].trailingPE?.raw || 0) > 0 && (sorted_data[i].trailingPE?.raw || 0) < 15)
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])  
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -510,6 +528,7 @@ function filter()
     }
 
     tmp = []
+    tmp_base = []
     tmp_fin = []
 
     switch(val_dividend)
@@ -518,14 +537,16 @@ function filter()
         {
             for(let i=0; i<sorted_data.length; i++)
             {
-                if(sorted_data[i].trailingAnnualDividendYield == "0.0")
+                if((sorted_data[i].trailingAnnualDividendYield?.raw || 0) == "0.0")
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -535,14 +556,16 @@ function filter()
             console.log("si")
             for(let i=0; i<sorted_data.length; i++)
             {
-                if(sorted_data[i].trailingAnnualDividendYield != "0.0")
+                if((sorted_data[i].trailingAnnualDividendYield?.raw || 0) != "0.0")
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i]) 
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -554,21 +577,24 @@ function filter()
     }
 
     tmp = []
+    tmp_base = []
     tmp_fin = []
 
-    switch (val_debtequity){
+    switch (val_debtequity){        
         case "min":
         {
             for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(sorted_data_financial[i].debtToEquity.raw <= 0.5)
+                if((sorted_data_financial[i].debtToEquity?.raw / 100 || 0) <= 0.5)
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -576,14 +602,16 @@ function filter()
         {
             for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(sorted_data_financial[i].debtToEquity > 0.5)
+                if((sorted_data_financial[i].debtToEquity?.raw / 100 || 0) > 0.5)
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i]) 
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -594,6 +622,7 @@ function filter()
     }
 
     tmp = []
+    tmp_base = []
     tmp_fin = []
 
     switch (val_grossmargin){
@@ -601,14 +630,16 @@ function filter()
         {
             for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(sorted_data_financial[i].grossMargins.raw >= 0)
+                if((sorted_data_financial[i].grossMargins?.raw || 0) >= 0)
                 {
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])           
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -616,14 +647,16 @@ function filter()
         {
             for(let i=0; i<sorted_data_financial.length; i++)
             {
-                if(sorted_data_financial[i].grossMargins.raw < 0)
+                if((sorted_data_financial[i].grossMargins?.raw || 0) < 0)
                 {     
                     tmp.push(sorted_data[i])
+                    tmp_base.push(sorted_data_base[i])
                     tmp_fin.push(sorted_data_financial[i])
                 }
             }
 
             sorted_data = tmp
+            sorted_data_base = tmp_base
             sorted_data_financial = tmp_fin
             break;
         }
@@ -634,6 +667,7 @@ function filter()
     }
 
     tmp = []
+    tmp_base = []
     tmp_fin = []
 
     sort("change");
