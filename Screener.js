@@ -3,27 +3,32 @@ array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", /*"STLAM.MI",*/ "AA
 array_crypto = ["BTC-USD", "ETH-USD", "CRO-USD", "BNB-USD", "XRP-USD", "ADA-USD"];
 
 var xhttp = [];
-var xhttp_base = []
-var xhttp_financial = [];
+var xhttp_b = []
+var xhttp_c = [];
+var xhttp_d = [];
 var xhttp_crypto = [];
 
 var response = [];
-var response_base = []
-var response_financial = [];
+var response_b = []
+var response_c = [];
+var response_d = []
 var response_crypto = [];
 
 var data = [];
-var data_base = []
-var data_financial = [];
+var data_b = []
+var data_c = [];
+var data_d = []
 var data_crypto = [];
 
 var sorted_data = [];
-var sorted_data_base = []
-var sorted_data_financial = [];
+var sorted_data_b = []
+var sorted_data_c = [];
+var sorted_data_d = []
 
 var filtered_data = [];
-var filtered_data_base = []
-var filtered_data_financial = [];
+var filtered_data_b = []
+var filtered_data_c = [];
+var filtered_data_d = []
 
 var tb = document.getElementById("tbody");
 var tb_crypto = document.getElementById("tbody_crypto");
@@ -32,8 +37,9 @@ var change_crypto_position = 2;
 
 
 var mancanti = array.length;
-var mancanti_base = array.length;
-var mancanti_financial = array.length;
+var mancanti_b = array.length;
+var mancanti_c = array.length;
+var mancanti_d = array.length
 var mancanti_crypto = array_crypto.length;
 var err = 0; //serve per non loggare in console arr.length volte "Network error"
 var full = false;
@@ -48,17 +54,19 @@ page_size();
 for(let i=0, j=0; i<array.length; i++)
 {
     xhttp[i] = new XMLHttpRequest();
-    xhttp_base[i] = new XMLHttpRequest();
-    xhttp_financial[i] = new XMLHttpRequest();
-
+    xhttp_b[i] = new XMLHttpRequest();
+    xhttp_c[i] = new XMLHttpRequest();
+    xhttp_d[i] = new XMLHttpRequest();
 
     xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=summaryDetail");
-    xhttp_base[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price");
-    xhttp_financial[i].open("GET", "https://query1.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=financialData")
+    xhttp_b[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price");
+    xhttp_c[i].open("GET", "https://query1.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=financialData")
+    xhttp_d[i].open("GET", "https://query1.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=defaultKeyStatistics")
 
     xhttp[i].send();
-    xhttp_base[i].send();
-    xhttp_financial[i].send();
+    xhttp_b[i].send();
+    xhttp_c[i].send();
+    xhttp_d[i].send();
 
     xhttp[i].onreadystatechange = function()
     {
@@ -69,11 +77,12 @@ for(let i=0, j=0; i<array.length; i++)
             response[i] = JSON.parse(xhttp[i].response);
             data[i] = response[i].quoteSummary.result[0].summaryDetail;
 
-            if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
+            if(mancanti_b == 0 && mancanti == 0 && mancanti_c == 0 && mancanti_d == 0)
             {
                 sorted_data = data
-                sorted_data_base = data_base
-                sorted_data_financial = data_financial
+                sorted_data_b = data_b
+                sorted_data_c = data_c
+                sorted_data_d = data_d
                 full = true;
                 sort("change");
             }
@@ -88,39 +97,61 @@ for(let i=0, j=0; i<array.length; i++)
         }
     }
 
-    xhttp_base[i].onreadystatechange = function()
+    xhttp_b[i].onreadystatechange = function()
     {
-        if(xhttp_base[i].status == 200 && xhttp_base[i].readyState ==4)
+        if(xhttp_b[i].status == 200 && xhttp_b[i].readyState ==4)
         {
-            mancanti_base --;
+            mancanti_b --;
 
-            response_base[i] = JSON.parse(xhttp_base[i].response);
-            data_base[i] = response_base[i].quoteSummary.result[0].price;
+            response_b[i] = JSON.parse(xhttp_b[i].response);
+            data_b[i] = response_b[i].quoteSummary.result[0].price;
 
-            if(mancanti_base == 0 && mancanti == 0 && mancanti_financial == 0)
+            if(mancanti_b == 0 && mancanti == 0 && mancanti_c == 0 && mancanti_d == 0)
             {
                 sorted_data = data
-                sorted_data_base = data_base
-                sorted_data_financial = data_financial
+                sorted_data_b = data_b
+                sorted_data_c = data_c
+                sorted_data_d = data_d
                 full = true;
                 sort("change");
             }
         }
     }
     
-    xhttp_financial[i].onreadystatechange = function()
+    xhttp_c[i].onreadystatechange = function()
     {
-        if(xhttp_financial[i].status == 200 && xhttp_financial[i].readyState ==4)
+        if(xhttp_c[i].status == 200 && xhttp_c[i].readyState ==4)
         {
-            mancanti_financial --;
-            response_financial[i] = JSON.parse(xhttp_financial[i].response);
-            data_financial[i] = response_financial[i].quoteSummary.result[0].financialData;
+            mancanti_c --;
+            response_c[i] = JSON.parse(xhttp_c[i].response);
+            data_c[i] = response_c[i].quoteSummary.result[0].financialData;
             
-            if(mancanti == 0 && mancanti_base == 0 && mancanti_financial == 0)
+            if(mancanti == 0 && mancanti_b == 0 && mancanti_c == 0 && mancanti_d == 0)
             {
                 sorted_data = data
-                sorted_data_base = data_base
-                sorted_data_financial = data_financial
+                sorted_data_b = data_b
+                sorted_data_c = data_c
+                sorted_data_d = data_d
+                full = true;
+                sort("change");
+            }
+        }
+    }
+
+    xhttp_d[i].onreadystatechange = function()
+    {
+        if(xhttp_d[i].status == 200 && xhttp_d[i].readyState ==4)
+        {
+            mancanti_d --;
+            response_d[i] = JSON.parse(xhttp_d[i].response);
+            data_d[i] = response_d[i].quoteSummary.result[0].defaultKeyStatistics;
+            
+            if(mancanti == 0 && mancanti_b == 0 && mancanti_c == 0 && mancanti_d == 0)
+            {
+                sorted_data = data
+                sorted_data_b = data_b
+                sorted_data_c = data_c
+                sorted_data_d = data_d
                 full = true;
                 sort("change");
             }
@@ -162,15 +193,15 @@ function table()
         var row = tb.insertRow();
 
         var cell_name = row.insertCell();
-        cell_name.innerHTML = sorted_data_base[i].shortName;
+        cell_name.innerHTML = sorted_data_b[i].shortName;
 
         var cell_price = row.insertCell();
-        cell_price.innerHTML = sorted_data_financial[i].currentPrice.raw.toFixed(2);
+        cell_price.innerHTML = sorted_data_c[i].currentPrice.raw.toFixed(2);
 
         var cell_market_cap = row.insertCell();
-        if(sorted_data_base[i].marketCap)
+        if(sorted_data_b[i].marketCap)
         {
-            cell_market_cap.innerHTML = (sorted_data_base[i].marketCap.raw/1000000000).toFixed(2) + " mld";  
+            cell_market_cap.innerHTML = (sorted_data_b[i].marketCap.raw/1000000000).toFixed(2) + " mld";  
         }
         else
         {
@@ -178,9 +209,9 @@ function table()
         }
 
         var cell_gross_margin = row.insertCell();
-        if(sorted_data_financial[i].grossMargins)
+        if(sorted_data_c[i].grossMargins)
         {
-            cell_gross_margin.innerHTML = (sorted_data_financial[i].grossMargins.raw *100).toFixed(2) + " %";
+            cell_gross_margin.innerHTML = (sorted_data_c[i].grossMargins.raw *100).toFixed(2) + " %";
         }              
         else
         {
@@ -188,9 +219,9 @@ function table()
         }
 
         var cell_profit_margin = row.insertCell();
-        if(sorted_data_financial[i].profitMargins)
+        if(sorted_data_c[i].profitMargins)
         {
-            cell_profit_margin.innerHTML = (sorted_data_financial[i].profitMargins.raw *100).toFixed(2) + " %";
+            cell_profit_margin.innerHTML = (sorted_data_c[i].profitMargins.raw *100).toFixed(2) + " %";
         }              
         else
         {
@@ -198,9 +229,9 @@ function table()
         }
 
         var cell_roe = row.insertCell();
-        if(sorted_data_financial[i].returnOnEquity?.raw)
+        if(sorted_data_c[i].returnOnEquity?.raw)
         {
-            cell_roe.innerHTML = (sorted_data_financial[i].returnOnEquity.raw *100).toFixed(2) + " %";
+            cell_roe.innerHTML = (sorted_data_c[i].returnOnEquity.raw *100).toFixed(2) + " %";
         }
         else
         {
@@ -208,9 +239,9 @@ function table()
         }
 
         var cell_debtequity = row.insertCell();
-        if(sorted_data_financial[i].debtToEquity?.raw)
+        if(sorted_data_c[i].debtToEquity?.raw)
         {
-            cell_debtequity.innerHTML = (sorted_data_financial[i].debtToEquity.raw /100).toFixed(2);
+            cell_debtequity.innerHTML = (sorted_data_c[i].debtToEquity.raw /100).toFixed(2);
         }
         else
         {
@@ -238,9 +269,9 @@ function table()
         }
 
         var cell_pb = row.insertCell();
-        if(sorted_data[i].priceToBook)
+        if(sorted_data_d[i].priceToBook?.raw)
         {
-            cell_pb.innerHTML = (sorted_data[i].priceToBook.raw).toFixed(2);
+            cell_pb.innerHTML = (sorted_data_d[i].priceToBook.raw).toFixed(2);
         }
         else
         {
@@ -249,9 +280,9 @@ function table()
 
 
         var cell_change = row.insertCell();
-        if(sorted_data_base[i].regularMarketChangePercent)
+        if(sorted_data_b[i].regularMarketChangePercent)
         {
-            cell_change.innerHTML = (sorted_data_base[i].regularMarketChangePercent.raw *100).toFixed(2);
+            cell_change.innerHTML = (sorted_data_b[i].regularMarketChangePercent.raw *100).toFixed(2);
         }
         else
         {
@@ -345,27 +376,27 @@ function sort(arr)
         {
             case "change":
                 {
-                    indices = Array.from(Object.keys(sorted_data_base)).sort((a, b) => ((sorted_data_base[a].regularMarketChangePercent?.raw || 0) - (sorted_data_base[b].regularMarketChangePercent?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_b)).sort((a, b) => ((sorted_data_b[a].regularMarketChangePercent?.raw || 0) - (sorted_data_b[b].regularMarketChangePercent?.raw || 0)));
                     break;
                 }
             case "market_cap":
                 {
-                    indices = Array.from(Object.keys(sorted_data_base)).sort((a, b) => ((sorted_data_base[a].marketCap?.raw || 0) - (sorted_data_base[b].marketCap?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_b)).sort((a, b) => ((sorted_data_b[a].marketCap?.raw || 0) - (sorted_data_b[b].marketCap?.raw || 0)));
                     break;
                 }
             case "gross_margin":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].grossMargins?.raw || 0) - (sorted_data_financial[b].grossMargins?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_c)).sort((a, b) => ((sorted_data_c[a].grossMargins?.raw || 0) - (sorted_data_c[b].grossMargins?.raw || 0)));
                     break;
                 }
             case "profit_margin":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].profitMargins?.raw || 0) - (sorted_data_financial[b].profitMargins?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_c)).sort((a, b) => ((sorted_data_c[a].profitMargins?.raw || 0) - (sorted_data_c[b].profitMargins?.raw || 0)));
                     break;
                 }
             case "debtequity":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => (((sorted_data_financial[a].debtToEquity?.raw || 0) - sorted_data_financial[b].debtToEquity?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_c)).sort((a, b) => (((sorted_data_c[a].debtToEquity?.raw || 0) - sorted_data_c[b].debtToEquity?.raw || 0)));
                     break;
                 }
             case "dividend":
@@ -380,27 +411,30 @@ function sort(arr)
                 }
             case "roe":
                 {
-                    indices = Array.from(Object.keys(sorted_data_financial)).sort((a, b) => ((sorted_data_financial[a].returnOnEquity?.raw || 0) - (sorted_data_financial[b].returnOnEquity?.raw || 0)));
+                    indices = Array.from(Object.keys(sorted_data_c)).sort((a, b) => ((sorted_data_c[a].returnOnEquity?.raw || 0) - (sorted_data_c[b].returnOnEquity?.raw || 0)));
                     break;
                 }
-            // case "pb":
-            //     {
-            //         indices = Array.from(Object.keys(sorted_data)).sort((a, b) => (sorted_data[a].priceToBook - sorted_data[b].priceToBook));
-            //         break;
-            //     }
+            case "pb":
+                {
+                    indices = Array.from(Object.keys(sorted_data_d)).sort((a, b) => ((sorted_data_d[a].priceToBook?.raw || 0) - (sorted_data_d[b].priceToBook?.raw || 0)));
+                    break;
+                }
         }
 
         let tmp = sorted_data
-        let tmp_base = sorted_data_base
-        let tmp_financial = sorted_data_financial
+        let tmp_b = sorted_data_b
+        let tmp_c = sorted_data_c
+        let tmp_d = sorted_data_d
 
         sorted_data = [];
-        sorted_data_base = []
-        sorted_data_financial = [];
+        sorted_data_b = []
+        sorted_data_c = [];
+        sorted_data_d = []
 
         sorted_data = indices.map(i => tmp[i]);
-        sorted_data_base = indices.map(i => tmp_base[i])
-        sorted_data_financial = indices.map(i => tmp_financial[i]);
+        sorted_data_b = indices.map(i => tmp_b[i])
+        sorted_data_c = indices.map(i => tmp_c[i])
+        sorted_data_d = indices.map(i => tmp_d[i])
 
         table();
     }
@@ -408,11 +442,12 @@ function sort(arr)
 
 function filter()
 {
-    let tmp = [], tmp_base = [], tmp_fin= []
+    let tmp = [], tmp_b = [], tmp_c = [], tmp_d = []
 
     sorted_data = data
-    sorted_data_base = data_base
-    sorted_data_financial = data_financial
+    sorted_data_b = data_b
+    sorted_data_c = data_c
+    sorted_Data_d = data_d
 
     const val_change = document.getElementById("filter_change").value;
     const val_pe = document.getElementById("filter_pe").value;
@@ -424,16 +459,18 @@ function filter()
         case "pos":
         {
             sorted_data = []
-            sorted_data_base = []
-            sorted_data_financial = []
+            sorted_data_b = []
+            sorted_data_c = []
+            sorted_data_d = []
 
             for(let i=0; i<data.length; i++)
             {
-                if((data_base[i].regularMarketChangePercent?.raw || 0) >= 0)
+                if((data_b[i].regularMarketChangePercent?.raw || 0) >= 0)
                 {
                     sorted_data.push(data[i])
-                    sorted_data_base.push(data_base[i]) 
-                    sorted_data_financial.push(data_financial[i])     
+                    sorted_data_b.push(data_b[i]) 
+                    sorted_data_c.push(data_c[i])     
+                    sorted_data_d.push(data_d[i])
                 }
             }
             break;
@@ -441,16 +478,18 @@ function filter()
         case "neg":
         {
             sorted_data = []
-            sorted_data_base = []
-            sorted_data_financial = []
+            sorted_data_b = []
+            sorted_data_c = []
+            sorted_data_d = []
 
             for(let i=0; i<data.length; i++)
             {
-                if((data_base[i].regularMarketChangePercent?.raw || 0) < 0)
+                if((data_b[i].regularMarketChangePercent?.raw || 0) < 0)
                 {
                     sorted_data.push(data[i])
-                    sorted_data_base.push(data_base[i]) 
-                    sorted_data_financial.push(data_financial[i]) 
+                    sorted_data_b.push(data_b[i]) 
+                    sorted_data_c.push(data_c[i]) 
+                    sorted_data_d.push(data_d[i])
                 }
             }
             break;
@@ -462,8 +501,9 @@ function filter()
     }
 
     tmp = []
-    tmp_base = []
-    tmp_fin = []
+    tmp_b = []
+    tmp_c = []
+    tmp_d = []
 
     switch(val_pe)
     {
@@ -474,14 +514,16 @@ function filter()
                 if(!(sorted_data[i].trailingPE))
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])
+                    sorted_data_d.push(data_d[i])
                 }
             }
             
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
 
@@ -492,14 +534,16 @@ function filter()
                 if((sorted_data[i].trailingPE?.raw || 0) != "0")
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])  
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])  
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
 
@@ -510,14 +554,16 @@ function filter()
                 if((sorted_data[i].trailingPE?.raw || 0) > 0 && (sorted_data[i].trailingPE?.raw || 0) < 15)
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])  
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])  
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
 
@@ -528,8 +574,9 @@ function filter()
     }
 
     tmp = []
-    tmp_base = []
-    tmp_fin = []
+    tmp_b = []
+    tmp_c = []
+    tmp_d = []
 
     switch(val_dividend)
     {
@@ -540,14 +587,16 @@ function filter()
                 if((sorted_data[i].trailingAnnualDividendYield?.raw || 0) == "0.0")
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
 
@@ -559,14 +608,16 @@ function filter()
                 if((sorted_data[i].trailingAnnualDividendYield?.raw || 0) != "0.0")
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i]) 
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])
+                    sorted_data_d.push(data_d[i]) 
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
 
@@ -577,42 +628,47 @@ function filter()
     }
 
     tmp = []
-    tmp_base = []
-    tmp_fin = []
+    tmp_b = []
+    tmp_c = []
+    tmp_d = []
 
     switch (val_debtequity){        
         case "min":
         {
-            for(let i=0; i<sorted_data_financial.length; i++)
+            for(let i=0; i<sorted_data_c.length; i++)
             {
-                if((sorted_data_financial[i].debtToEquity?.raw / 100 || 0) <= 0.5)
+                if((sorted_data_c[i].debtToEquity?.raw / 100 || 0) <= 0.5)
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
         case "magg":
         {
-            for(let i=0; i<sorted_data_financial.length; i++)
+            for(let i=0; i<sorted_data_c.length; i++)
             {
-                if((sorted_data_financial[i].debtToEquity?.raw / 100 || 0) > 0.5)
+                if((sorted_data_c[i].debtToEquity?.raw / 100 || 0) > 0.5)
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i]) 
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i]) 
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
         case "empty":
@@ -622,42 +678,47 @@ function filter()
     }
 
     tmp = []
-    tmp_base = []
-    tmp_fin = []
+    tmp_b = []
+    tmp_c = []
+    tmp_d = []
 
     switch (val_grossmargin){
         case "pos":
         {
-            for(let i=0; i<sorted_data_financial.length; i++)
+            for(let i=0; i<sorted_data_c.length; i++)
             {
-                if((sorted_data_financial[i].grossMargins?.raw || 0) >= 0)
+                if((sorted_data_c[i].grossMargins?.raw || 0) >= 0)
                 {
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])           
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])  
+                    sorted_data_d.push(data_d[i])         
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
         case "neg":
         {
-            for(let i=0; i<sorted_data_financial.length; i++)
+            for(let i=0; i<sorted_data_c.length; i++)
             {
-                if((sorted_data_financial[i].grossMargins?.raw || 0) < 0)
+                if((sorted_data_c[i].grossMargins?.raw || 0) < 0)
                 {     
                     tmp.push(sorted_data[i])
-                    tmp_base.push(sorted_data_base[i])
-                    tmp_fin.push(sorted_data_financial[i])
+                    tmp_b.push(sorted_data_b[i])
+                    tmp_c.push(sorted_data_c[i])
+                    sorted_data_d.push(data_d[i])
                 }
             }
 
             sorted_data = tmp
-            sorted_data_base = tmp_base
-            sorted_data_financial = tmp_fin
+            sorted_data_b = tmp_b
+            sorted_data_c = tmp_c
+            sorted_data_d = tmp_d
             break;
         }
         case "empty":
@@ -667,8 +728,9 @@ function filter()
     }
 
     tmp = []
-    tmp_base = []
-    tmp_fin = []
+    tmp_b = []
+    tmp_c = []
+    tmp_d = []
 
     sort("change");
     table();
