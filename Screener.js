@@ -47,9 +47,11 @@ var full = false;
 const d_left = document.getElementById("div_left").style;
 const d_crypto = document.getElementById("div_crypto").style;
 const d_right = document.getElementById("div_right").style;
+const d_countdown = document.getElementById("div_countdown").style;
 d_right.visibility = "hidden";
 
 page_size();
+countdown();
 
 for(let i=0, j=0; i<array.length; i++)
 {
@@ -757,10 +759,11 @@ function page_size()
 
         d_left.marginTop = "-1";
         d_crypto.marginTop = "-1";
-        d_right.marginTop = "20"
+        d_countdown.marginTop = "-1";
+        d_right.marginTop = "20";
 
         d_left.float = "left";
-        d_crypto.float = "left"
+        d_crypto.float = "left";
         d_right.float = "left";
 
         d_crypto.height = max + "px"
@@ -776,6 +779,7 @@ function page_size()
 
         d_crypto.margin = "auto";
         d_crypto.marginTop = "3%";
+        d_countdown.marginTop = "3%";
 
         d_right.margin = "auto";
         d_right.marginTop = "3%";
@@ -792,4 +796,30 @@ function page_size()
 
 window.onresize = function() {
     page_size();
+}
+
+async function countdown(){
+    var countDownDate = new Date("Apr 27, 2024 12:44:53").getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() 
+        {
+            var now = new Date().getTime();
+
+            var distance = countDownDate - now;
+
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+
+            if (distance < 0) // countdown terminato 
+            {
+                clearInterval(x);
+                document.getElementById("timer").innerHTML = "OMMMIODDDIO IT'S TIME TO GET RICH";
+            }
+        }, 1000);
 }
