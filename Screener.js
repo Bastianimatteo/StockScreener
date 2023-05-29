@@ -253,7 +253,7 @@ function table()
         var cell_dividend = row.insertCell();
         if(sorted_data[i].trailingAnnualDividendYield?.raw)
         {
-            cell_dividend.innerHTML = (sorted_data[i].dividendYield.raw *100).toFixed(2) + " %";                
+            cell_dividend.innerHTML = (sorted_data[i].trailingAnnualDividendYield?.raw *100).toFixed(2) + " %";                
         }
         else
         {
