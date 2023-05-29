@@ -1,5 +1,6 @@
 #table {text-align: center; font-size: 12px; font-family: sans-serif;}
 #table_crypto {text-align: center; font-size: 12px; font-family: sans-serif; position: sticky; top: -1}
+#div_countdown {position: sticky; top: 180}
 
 #table th{border: 1px solid grey; position: sticky; top: -1px}
 td{border: 1px solid grey}
