@@ -1,4 +1,4 @@
-array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "FBK.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB", "GSK", "AEM", "PSA", "SBSW", "BTI"];
+array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "FBK.MI", /*"STLAM.MI",*/ "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NIO", "CSIQ", "MU", "PG", "ASML", "NFLX", "QCOM", "PFE", "RIVN", "RBLX", "NVDA", "U", "BE", "FCEL", "AMD", "META", "INTC", "PARA", "PLUG", "NKLA", "T", "BYND", "BAC", "PYPL", "KO", "GS", "JPM", "CGC", "SPWR", "TSM", "NEL.OL", "RUN", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB", "GSK", "ROG.SW", "AEM", "PSA", "SBSW", "BTI"];
 
 array_crypto = ["BTC-USD", "ETH-USD", "SOL-USD", "CRO-USD", "BNB-USD", "XRP-USD", "ADA-USD"];
 
