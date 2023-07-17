@@ -21,8 +21,6 @@ var sorted_data = []
 
 var tb = document.getElementById("tbody");
 var tb_crypto = document.getElementById("tbody_crypto");
-var change_position = 11;
-var change_crypto_position = 2;
 
 var mancanti = array.length;
 var mancanti_crypto = array_crypto.length;
@@ -40,7 +38,7 @@ for(let i=0; i<array.length; i++)
 {
     xhttp[i] = new XMLHttpRequest();
 
-    xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price%2CsummaryDetail%2CdefaultKeyStatistics%2CfinancialData");
+    xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price%2CsummaryDetail%2CdefaultKeyStatistics%2CfinancialData&2CcashflowStatementHistory");
 
     xhttp[i].send();
 
@@ -79,7 +77,7 @@ for(let i=0; i<array.length; i++)
             dat.current_ratio = current_ratio.toFixed(2)
             dat.roe = (roe * 100).toFixed(2)
             dat.debt_to_equity = (debt_to_equity / 100).toFixed(2)
-            dat.pe = (pe / 100).toFixed(2)
+            dat.pe = (pe).toFixed(2)
             dat.dividend_yield = (dividend_yield * 100).toFixed(2)
             dat.pb = (pb).toFixed(2)
 
@@ -140,13 +138,10 @@ function table()
         var cell_name = row.insertCell();
         cell_name.innerHTML = sorted_data[i].name
 
-        var cell_price = row.insertCell();
-        cell_price.innerHTML = sorted_data[i].price;
-
         var cell_market_cap = row.insertCell();
         if(sorted_data[i].market_cap)
         {
-            cell_market_cap.innerHTML = sorted_data[i].market_cap + " mld";  
+            cell_market_cap.innerHTML = sorted_data[i].market_cap + " mld";
         }
         else
         {
@@ -238,7 +233,7 @@ function table()
         var cell_change = row.insertCell();
         if(sorted_data[i].change)
         {
-            cell_change.innerHTML = sorted_data[i].change
+            cell_change.innerHTML = sorted_data[i].change + " %"
         }
         else
         {
@@ -247,13 +242,6 @@ function table()
     }
         
     colors();
-    
-    var tr = tb.getElementsByTagName("tr");
-    for(let i=0; i<tr.length; i++)
-    {
-        var td = tr[i].getElementsByTagName("td");
-        td[change_position].innerHTML = td[change_position].textContent + " %";
-    }
 
     page_size();
 }
@@ -282,7 +270,7 @@ function table_crypto()
     for(let i=0; i<tr.length; i++)
     {
         var td = tr[i].getElementsByTagName("td");
-        td[change_crypto_position].innerHTML = td[change_crypto_position].textContent + " %";
+        td[2].innerHTML = td[2].textContent + " %";
     }
 }
 
@@ -293,13 +281,47 @@ function colors()
     for(let i=0; i<tr.length; i++)
     {
         var td = tr[i].getElementsByTagName("td");
-        if(td[change_position].innerHTML > 0)
+
+        if(sorted_data[i].gross_margin < 0)
         {
-            td[change_position].style.color = "green"
+            td[2].style.color = "#e60000"
+        }
+        if(sorted_data[i].gross_margin > 50)
+        {
+            td[2].style.color = "green"
+        }
+
+        if(sorted_data[i].profit_margin < 0)
+        {
+            td[3].style.color = "#e60000"
+        }
+        if(sorted_data[i].profit_margin > 30)
+        {
+            td[3].style.color = "green"
+        }
+
+        if(sorted_data[i].roe < 0)
+        {
+            td[4].style.color = "#e60000"
+        }
+
+        if(sorted_data[i].debt_to_equity > 1)
+        {
+            td[5].style.color = "#e60000"
+        }
+
+        if(sorted_data[i].current_ratio < 1)
+        {
+            td[6].style.color = "#e60000"
+        }
+
+        if(sorted_data[i].change > 0)
+        {
+            td[10].style.color = "green"
         }
         else
         {
-            td[change_position].style.color ="#e60000";
+            td[10].style.color ="#e60000";
         }
     }
 }
@@ -311,13 +333,13 @@ function colors_crypto()
     for(let i=0; i<tr.length; i++)
     {
         var td = tr[i].getElementsByTagName("td");
-        if(td[change_crypto_position].innerHTML > 0)
+        if(td[2].innerHTML > 0)
         {
-            td[change_crypto_position].style.color = "green"
+            td[2].style.color = "green"
         }
         else
         {
-            td[change_crypto_position].style.color ="#e60000";
+            td[2].style.color ="#e60000";
         }
     }
 
