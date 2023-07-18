@@ -12,14 +12,15 @@
                 <tr class="table-dark">
                     <th>Name</th>
                     <th class="clickable" onclick="sort('market_cap')">Market Cap</th>
-                    <th class="clickable" onclick="sort('gross_margin')">Gross margin</th>
-                    <th class="clickable" onclick="sort('profit_margin')">Profit margin</th>
+                    <th class="clickable" onclick="sort('gross_margin')">Gross M</th>
+                    <th class="clickable" onclick="sort('profit_margin')">Profit M</th>
                     <th class="clickable" onclick="sort('roe')">ROE</th>
                     <th class="clickable" onclick="sort('debtequity')">Deb/Eq</th>
-                    <th class="clickable" onclick="sort('current_ratio')">Current ratio</th>
+                    <th class="clickable" onclick="sort('current_ratio')">Current R</th>
                     <th class="clickable" onclick="sort('dividend')">Div Yield</th>
                     <th class="clickable" onclick="sort('pe')">P/E</th>
                     <th class="clickable" onclick="sort('pb')">P/B</th>
+                    <th>Balance</th>
                     <th class="clickable" onclick="sort('change')">Change 1D</th>
                 </tr>
                 <tbody id="tbody"></tbody>
@@ -39,6 +40,54 @@
             <div id="div_countdown" style="margin-top: 10px">
                 BITCOIN HALVING COUNTDOWN
                 <p id="timer"></p>
+            </div>
+        </div>
+
+        <div id="modal_balance">
+            <div id="modal_balance_content">
+                <p id="modal_balance_title"></p>
+                <p>Revenue</p>
+                <table id="table_revenue" class="table-striped table-sm w-100 table-active">
+                    <tr class="table-dark">
+                        <th></th>
+                        <th>2023</th>
+                        <th>2022</th>
+                        <th>2021</th>
+                        <th>2020</th>
+                    </tr>
+                    <tr>
+                        <td>Total Revenue</td>
+                        <td id="rev1"></td>
+                        <td id="rev2"></td>
+                        <td id="rev3"></td>
+                        <td id="rev4"></td>
+                    </tr>
+                    <tr>
+                        <td>Net Income</td>
+                        <td id="ut1"></td>
+                        <td id="ut2"></td>
+                        <td id="ut3"></td>
+                        <td id="ut4"></td>
+                    </tr>
+                </table>
+
+                <p></p>
+                <p>Gross Margin</p>
+                <table id="table_grossmargin" class="table-striped table-sm w-100 table-active">
+                    <tr class="table-dark">
+                        <th>2023</th>
+                        <th>2022</th>
+                        <th>2021</th>
+                        <th>2020</th>
+                    </tr>
+                    <tr>
+                        <td id="gross1"></td>
+                        <td id="gross2"></td>
+                        <td id="gross3"></td>
+                        <td id="gross4"></td>
+                    </tr>
+                </table>
+
             </div>
         </div>
     </body>
