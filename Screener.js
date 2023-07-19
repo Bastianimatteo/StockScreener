@@ -28,43 +28,43 @@ var full = false;
 
 const d_left = document.getElementById("div_left").style;
 const d_crypto = document.getElementById("div_crypto").style;
-const d_countdown = document.getElementById("div_countdown").style;
 
 const modal_balance = document.getElementById("modal_balance")
 modal_balance.style.visibility = "hidden"
 const modal_balance_title = document.getElementById("modal_balance_title")
 
-const tr_rev1 = document.getElementById("rev1")
-const tr_rev2 = document.getElementById("rev2")
-const tr_rev3 = document.getElementById("rev3")
-const tr_rev4 = document.getElementById("rev4")
+const td_rev1 = document.getElementById("rev1")
+const td_rev2 = document.getElementById("rev2")
+const td_rev3 = document.getElementById("rev3")
+const td_rev4 = document.getElementById("rev4")
 
-const tr_ut1 = document.getElementById("ut1")
-const tr_ut2 = document.getElementById("ut2")
-const tr_ut3 = document.getElementById("ut3")
-const tr_ut4 = document.getElementById("ut4")
+const td_ut1 = document.getElementById("ut1")
+const td_ut2 = document.getElementById("ut2")
+const td_ut3 = document.getElementById("ut3")
+const td_ut4 = document.getElementById("ut4")
 
-const tr_gross1 = document.getElementById("gross1")
-const tr_gross2 = document.getElementById("gross2")
-const tr_gross3 = document.getElementById("gross3")
-const tr_gross4 = document.getElementById("gross4")
+const td_gross1 = document.getElementById("gross1")
+const td_gross2 = document.getElementById("gross2")
+const td_gross3 = document.getElementById("gross3")
+const td_gross4 = document.getElementById("gross4")
 
 let retryCount = 0;
-const maxRetries = 20;
-const retryDelay = 500;
+
+var already = []
 
 page_size();
-countdown();
 load()
 
 function load(){
     data = []
+    already = []
+    mancanti = array.length
 
     for(let i=0; i<array.length; i++)
     {
         xhttp[i] = new XMLHttpRequest();
 
-        xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price%2CsummaryDetail%2CdefaultKeyStatistics%2CfinancialData%2CincomeStatementHistory");
+        xhttp[i].open("GET", "https://query2.finance.yahoo.com/v10/finance/quoteSummary/" + array[i] + "?modules=price%2CsummaryDetail%2CdefaultKeyStatistics%2CfinancialData%2CincomeStatementHistory%2CbalanceSheetHistory");
 
         xhttp[i].send();
 
@@ -72,89 +72,85 @@ function load(){
         {
             if(xhttp[i].status == 200 && xhttp[i].readyState ==4)
             {
-                dat = {name: "", price: null, market_cap: null, gross_margin: null, profit_margin: null, roe: null, debt_to_equity: null, dividend_yield: null, pe: null, pb: null, current_ratio: null, change: null, rev1: null, rev2: null, rev3: null, rev4: null, ut1: null, ut2: null, ut3: null, ut4: null, gross1: null, gross2: null, gross3: null, gross4: null}
-
-                mancanti --;
-
-                response = JSON.parse(xhttp[i].response);
-
-                const name = response.quoteSummary?.result[0]?.price?.shortName || ""
-                const price = response.quoteSummary?.result[0]?.price?.regularMarketPrice?.raw || 0
-                const market_cap = response.quoteSummary?.result[0]?.price?.marketCap?.raw || 0
-                const change = response.quoteSummary?.result[0]?.price?.regularMarketChangePercent?.raw || 0
-
-                const gross_margin = response.quoteSummary?.result[0]?.financialData?.grossMargins?.raw || 0
-                const profit_margin = response.quoteSummary?.result[0]?.financialData?.profitMargins?.raw || 0
-                const current_ratio = response.quoteSummary?.result[0]?.financialData?.currentRatio?.raw || 0
-                const roe = response.quoteSummary?.result[0]?.financialData?.returnOnEquity?.raw || 0
-                const debt_to_equity = response.quoteSummary?.result[0]?.financialData?.debtToEquity?.raw || 0
-
-                const pe = response.quoteSummary?.result[0]?.summaryDetail?.trailingPE?.raw || 0
-                const dividend_yield = response.quoteSummary?.result[0]?.summaryDetail?.trailingAnnualDividendYield?.raw || 0
-
-                const pb = response.quoteSummary?.result[0]?.defaultKeyStatistics?.priceToBook?.raw || 0
-
-                const income = response.quoteSummary?.result[0]?.incomeStatementHistory?.incomeStatementHistory || 0
-
-                var rev1 = 0
-                var rev2 = 0
-                var rev3 = 0
-                var rev4 = 0
-                var ut1 = 0
-                var ut2 = 0
-                var ut3 = 0
-                var ut4 = 0
-
-                if(income != 0)
+                if(already[i] == undefined)
                 {
-                    rev1 = income[0]?.totalRevenue?.fmt || 0
-                    rev2 = income[1]?.totalRevenue?.fmt || 0
-                    rev3 = income[2]?.totalRevenue?.fmt || 0
-                    rev4 = income[3]?.totalRevenue?.fmt || 0
+                    
+                    already[i] =  1
+                    dat = {name: "", price: null, market_cap: null, gross_margin: null, profit_margin: null, roe: null, debt_to_equity: null, dividend_yield: null, pe: null, pb: null, current_ratio: null, change: null, rev: [], ut: [], gross: [], debt: []}
 
-                    ut1 = income[0]?.netIncome?.fmt || 0
-                    ut2 = income[1]?.netIncome?.fmt || 0
-                    ut3 = income[2]?.netIncome?.fmt || 0
-                    ut4 = income[3]?.netIncome?.fmt || 0
+                    mancanti --;
 
-                    gross1 = income[0]?.grossProfit?.fmt || 0
-                    gross2 = income[1]?.grossProfit?.fmt || 0
-                    gross3 = income[2]?.grossProfit?.fmt || 0
-                    gross4 = income[3]?.grossProfit?.fmt || 0
-                }
+                    response = JSON.parse(xhttp[i].response);
+                    var result = response.quoteSummary?.result[0]
 
-                dat.name = name
-                dat.price = price.toFixed(2)
-                dat.market_cap = (market_cap / 1000000000).toFixed(2)
-                dat.change = (change * 100).toFixed(2)
-                dat.gross_margin = (gross_margin * 100).toFixed(2)
-                dat.profit_margin = (profit_margin * 100).toFixed(2)
-                dat.current_ratio = current_ratio.toFixed(2)
-                dat.roe = (roe * 100).toFixed(2)
-                dat.debt_to_equity = (debt_to_equity / 100).toFixed(2)
-                dat.pe = (pe).toFixed(2)
-                dat.dividend_yield = (dividend_yield * 100).toFixed(2)
-                dat.pb = (pb).toFixed(2)
-                dat.rev1 = rev1
-                dat.rev2 = rev2
-                dat.rev3 = rev3
-                dat.rev4 = rev4
-                dat.ut1 = ut1
-                dat.ut2 = ut2
-                dat.ut3 = ut3
-                dat.ut4 = ut4
-                dat.gross1 = gross1
-                dat.gross2 = gross2
-                dat.gross3 = gross3
-                dat.gross4 = gross4
+                    const name = result?.price?.shortName || ""
+                    const price = result?.price?.regularMarketPrice?.raw || 0
+                    const market_cap = result?.price?.marketCap?.raw || 0
+                    const change = result?.price?.regularMarketChangePercent?.raw || 0
 
-                data.push(dat)
+                    const gross_margin = result?.financialData?.grossMargins?.raw || 0
+                    const profit_margin = result?.financialData?.profitMargins?.raw || 0
+                    const current_ratio = result?.financialData?.currentRatio?.raw || 0
+                    const roe = result?.financialData?.returnOnEquity?.raw || 0
+                    const debt_to_equity = result?.financialData?.debtToEquity?.raw || 0
 
-                if(mancanti == 0)
-                {
-                    sorted_data = data
-                    full = true;
-                    sort("change");
+                    const pe = result?.summaryDetail?.trailingPE?.raw || 0
+                    const dividend_yield = result?.summaryDetail?.trailingAnnualDividendYield?.raw || 0
+
+                    const pb = result?.defaultKeyStatistics?.priceToBook?.raw || 0
+
+                    const income = result?.incomeStatementHistory?.incomeStatementHistory || 0
+
+                    const balance = result?.balanceSheetHistory?.balanceSheetStatements || 0
+
+                    var tmp_rev = []
+                    var tmp_ut = []
+                    var tmp_gross = []
+                    var tmp_debt = []
+
+                    if(income != 0)
+                    {
+                        for(let j = 0; j<4; j++)
+                        {
+                            tmp_rev.push(income[j]?.totalRevenue?.raw || 0)
+                            tmp_ut.push(income[j]?.netIncome?.raw || 0)
+                            tmp_gross.push(income[j]?.grossProfit?.raw || 0)
+                        }
+                    }
+
+                    if(balance != 0)
+                    {
+                        for(let j = 0; j<4; j++)
+                        {
+                            tmp_debt.push(balance[j]?.longTermDebt?.raw || 0)
+                        }
+                    }
+
+                    dat.name = name
+                    dat.price = price.toFixed(2)
+                    dat.market_cap = (market_cap / 1000000000).toFixed(2)
+                    dat.change = (change * 100).toFixed(2)
+                    dat.gross_margin = (gross_margin * 100).toFixed(2)
+                    dat.profit_margin = (profit_margin * 100).toFixed(2)
+                    dat.current_ratio = current_ratio.toFixed(2)
+                    dat.roe = (roe * 100).toFixed(2)
+                    dat.debt_to_equity = (debt_to_equity / 100).toFixed(2)
+                    dat.pe = (pe).toFixed(2)
+                    dat.dividend_yield = (dividend_yield * 100).toFixed(2)
+                    dat.pb = (pb).toFixed(2)
+                    dat.rev = tmp_rev
+                    dat.ut = tmp_ut
+                    dat.gross = tmp_gross
+                    dat.debt = tmp_debt
+
+                    data.push(dat)
+
+                    if(mancanti == 0)
+                    {
+                        sorted_data = data
+                        full = true;
+                        sort("change");
+                    }
                 }
             }
             else
@@ -170,13 +166,13 @@ function load(){
 
 function retryRequest(i) 
 {
-    if (retryCount < maxRetries) 
+    if (retryCount < 20) 
     {
       console.log("Retrying request " + (i + 1))
       retryCount++
       setTimeout(() => {
         load()
-      }, retryDelay)
+      }, 1000)
     } 
     else 
     {
@@ -332,24 +328,75 @@ function table()
 
 function showModal(i)
 {
+    console.log(sorted_data[i])
+
     modal_balance_title.innerHTML = "<b>" + sorted_data[i].name + "</b>"
 
-    tr_rev1.innerHTML = sorted_data[i].rev1 != 0 ? sorted_data[i].rev1 : "-"
-    tr_rev2.innerHTML = sorted_data[i].rev2 != 0 ? sorted_data[i].rev2 : "-"
-    tr_rev3.innerHTML = sorted_data[i].rev3 != 0 ? sorted_data[i].rev3 : "-"
-    tr_rev4.innerHTML = sorted_data[i].rev4 != 0 ? sorted_data[i].rev4 : "-"
+    const tbody_revenue = document.getElementById("tbody_revenue")
+    tbody_revenue.innerHTML = ""
 
-    tr_ut1.innerHTML = sorted_data[i].ut1 != 0 ? sorted_data[i].ut1 : "-"
-    tr_ut2.innerHTML = sorted_data[i].ut2 != 0 ? sorted_data[i].ut2 : "-"
-    tr_ut3.innerHTML = sorted_data[i].ut3 != 0 ? sorted_data[i].ut3 : "-"
-    tr_ut4.innerHTML = sorted_data[i].ut4 != 0 ? sorted_data[i].ut4 : "-"
+    const tbody_grossmargin = document.getElementById("tbody_grossmargin")
+    tbody_grossmargin.innerHTML = ""
 
-    tr_gross1.innerHTML = sorted_data[i].gross1 != 0 ? sorted_data[i].gross1 : "-"
-    tr_gross2.innerHTML = sorted_data[i].gross2 != 0 ? sorted_data[i].gross2 : "-"
-    tr_gross3.innerHTML = sorted_data[i].gross3 != 0 ? sorted_data[i].gross3 : "-"
-    tr_gross4.innerHTML = sorted_data[i].gross4 != 0 ? sorted_data[i].gross4 : "-"
+    const tbody_debt = document.getElementById("tbody_debt")
+    tbody_debt.innerHTML = ""
+
+    const row_revenue1 = tbody_revenue.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_revenue1.insertCell();
+
+        j == 0 ? (cell.innerHTML = "<b>Total Revenue</b>") : (cell.innerHTML = sorted_data[i].rev[j - 1] != 0 ? 
+        "<b>" + format(sorted_data[i].rev[j - 1]) + "</b>" : "-")
+    }
+
+    const row_revenue2 = tbody_revenue.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_revenue2.insertCell();
+
+        j == 0 ? (cell.innerHTML = "Gross Margin") : (cell.innerHTML = sorted_data[i].gross[j - 1] != 0 ? 
+        format(sorted_data[i].gross[j - 1]) : "-")
+    }
+
+    const row_revenue3 = tbody_revenue.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_revenue3.insertCell();
+
+        j == 0 ? (cell.innerHTML = "<b>Net Income</b>") : (cell.innerHTML = sorted_data[i].ut[j - 1] != 0 ? 
+        "<b>" + format(sorted_data[i].ut[j - 1]) + "</b>" : "-")   
+    }
+
+    const row_gross_percent = tbody_grossmargin.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_gross_percent.insertCell();
+        j == 0 ? (cell.innerHTML = "Gross Margin %") : cell.innerHTML = (sorted_data[i].gross[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].gross[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
+    }
+
+    const row_profit_percent = tbody_grossmargin.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_profit_percent.insertCell();
+        j == 0 ? (cell.innerHTML = "Profit Margin %") : cell.innerHTML = (sorted_data[i].ut[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].ut[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
+    }
+
+    const row_debt = tbody_debt.insertRow()
+    for(let j = 0; j<4; j++)
+    {
+        var cell = row_debt.insertCell();
+        cell.innerHTML = sorted_data[i].debt[j] != 0 ? format(sorted_data[i].debt[j]) : "-"
+    }
 
     modal_balance.style.visibility = "visible"
+}
+
+function format(v)
+{
+    const value = Math.abs(v)
+    const new_value = value > 1000000000 ? (value / 1000000000).toFixed(2) + " B" : value > 1000000 ? (value / 1000000).toFixed(2) + " M" : (value / 1000).toFixed(2) + " K"
+    return new_value
 }
 
 function table_crypto()
@@ -538,7 +585,6 @@ function page_size()
 
         d_left.marginTop = "-1";
         d_crypto.marginTop = "-1";
-        d_countdown.marginTop = "-1";
 
         d_left.float = "left";
         d_crypto.float = "left";
@@ -555,7 +601,6 @@ function page_size()
 
         d_crypto.margin = "auto";
         d_crypto.marginTop = "3%";
-        d_countdown.marginTop = "3%";
 
         d_crypto.height = table_cryptoHeight + "px";
 
@@ -567,32 +612,6 @@ function page_size()
 
 window.onresize = function() {
     page_size();
-}
-
-async function countdown(){
-    var countDownDate = new Date("Apr 27, 2024 12:44:53").getTime();
-
-        // Update the count down every 1 second
-        var x = setInterval(function() 
-        {
-            var now = new Date().getTime();
-
-            var distance = countDownDate - now;
-
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("timer").innerHTML = days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s ";
-
-            if (distance < 0) // countdown terminato 
-            {
-                clearInterval(x);
-                document.getElementById("timer").innerHTML = "OMMMIODDDIO IT'S TIME TO GET RICH";
-            }
-        }, 1000);
 }
 
 window.onclick = function(event) {
