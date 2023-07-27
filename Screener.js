@@ -3,7 +3,7 @@ array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "FBK.MI", "STLAM.MI
 "PLUG", "NKLA", "BLDP", "BE", "FCEL", "SPWR", "NEL.OL", "RUN", "CSIQ", "ENPH", "DQ", "FSLR", 
 "BYND", "BAC", "KO", "GS", "JPM", "CGC", "TSM", 
 "PFE", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB", "GSK", "ROG.SW", "PG", 
-"AEM", "PSA", "SBSW", "BTI", "OGI", "VZ"];
+"AEM", "PSA", "SBSW", "BTI", "OGI", "VZ", "RYAAY"];
 
 array_crypto = ["BTC-USD", "ETH-USD", "SOL-USD", "CRO-USD", "BNB-USD", "XRP-USD", "ADA-USD"];
 
@@ -33,21 +33,6 @@ const modal_balance = document.getElementById("modal_balance")
 modal_balance.style.visibility = "hidden"
 const modal_balance_title = document.getElementById("modal_balance_title")
 
-const td_rev1 = document.getElementById("rev1")
-const td_rev2 = document.getElementById("rev2")
-const td_rev3 = document.getElementById("rev3")
-const td_rev4 = document.getElementById("rev4")
-
-const td_ut1 = document.getElementById("ut1")
-const td_ut2 = document.getElementById("ut2")
-const td_ut3 = document.getElementById("ut3")
-const td_ut4 = document.getElementById("ut4")
-
-const td_gross1 = document.getElementById("gross1")
-const td_gross2 = document.getElementById("gross2")
-const td_gross3 = document.getElementById("gross3")
-const td_gross4 = document.getElementById("gross4")
-
 let retryCount = 0;
 
 var already = []
@@ -76,7 +61,7 @@ function load(){
                 {
                     
                     already[i] =  1
-                    dat = {name: "", price: null, market_cap: null, gross_margin: null, profit_margin: null, roe: null, debt_to_equity: null, dividend_yield: null, pe: null, pb: null, current_ratio: null, change: null, rev: [], ut: [], gross: [], debt: []}
+                    dat = {name: "", price: null, market_cap: null, gross_margin: null, profit_margin: null, roe: null, debt_to_equity: null, dividend_yield: null, pe: null, pb: null, current_ratio: null, change: null, rev: [], net: [], gross: [], debt: [], equity: [], invest: []}
 
                     mancanti --;
 
@@ -104,16 +89,18 @@ function load(){
                     const balance = result?.balanceSheetHistory?.balanceSheetStatements || 0
 
                     var tmp_rev = []
-                    var tmp_ut = []
+                    var tmp_net = []
                     var tmp_gross = []
                     var tmp_debt = []
+                    var tmp_equity = []
+                    var tmp_invest = []
 
                     if(income != 0)
                     {
                         for(let j = 0; j<4; j++)
                         {
                             tmp_rev.push(income[j]?.totalRevenue?.raw || 0)
-                            tmp_ut.push(income[j]?.netIncome?.raw || 0)
+                            tmp_net.push(income[j]?.netIncome?.raw || 0)
                             tmp_gross.push(income[j]?.grossProfit?.raw || 0)
                         }
                     }
@@ -123,6 +110,8 @@ function load(){
                         for(let j = 0; j<4; j++)
                         {
                             tmp_debt.push(balance[j]?.longTermDebt?.raw || 0)
+                            tmp_equity.push(balance[j]?.totalStockholderEquity?.raw || 0)
+                            tmp_invest.push(balance[j]?.totalAssets?.raw || 0)
                         }
                     }
 
@@ -139,9 +128,11 @@ function load(){
                     dat.dividend_yield = (dividend_yield * 100).toFixed(2)
                     dat.pb = (pb).toFixed(2)
                     dat.rev = tmp_rev
-                    dat.ut = tmp_ut
+                    dat.net = tmp_net
                     dat.gross = tmp_gross
                     dat.debt = tmp_debt
+                    dat.equity = tmp_equity
+                    dat.invest = tmp_invest
 
                     data.push(dat)
 
@@ -166,13 +157,12 @@ function load(){
 
 function retryRequest(i) 
 {
-    if (retryCount < 20) 
+    if (retryCount < 30) 
     {
-      console.log("Retrying request " + (i + 1))
       retryCount++
       setTimeout(() => {
         load()
-      }, 1000)
+      }, 500)
     } 
     else 
     {
@@ -328,7 +318,7 @@ function table()
 
 function showModal(i)
 {
-    console.log(sorted_data[i])
+    console.log(sorted_data[i].invest)
 
     modal_balance_title.innerHTML = "<b>" + sorted_data[i].name + "</b>"
 
@@ -341,61 +331,75 @@ function showModal(i)
     const tbody_debt = document.getElementById("tbody_debt")
     tbody_debt.innerHTML = ""
 
-    const row_revenue1 = tbody_revenue.insertRow()
+    const tbody_returns = document.getElementById("tbody_returns")
+    tbody_returns.innerHTML = ""
+
+    const row_revenue = tbody_revenue.insertRow()
     for(let j = 0; j<5; j++)
     {
-        var cell = row_revenue1.insertCell();
+        var cell = row_revenue.insertCell();
 
-        j == 0 ? (cell.innerHTML = "<b>Total Revenue</b>") : (cell.innerHTML = sorted_data[i].rev[j - 1] != 0 ? 
-        "<b>" + format(sorted_data[i].rev[j - 1]) + "</b>" : "-")
+        j == 0 ? (cell.innerHTML = "Total Revenue") : (cell.innerHTML = sorted_data[i].rev[j - 1] != 0 ? 
+        format(sorted_data[i].rev[j - 1]) : "-")
     }
 
-    const row_revenue2 = tbody_revenue.insertRow()
+    const row_net = tbody_revenue.insertRow()
     for(let j = 0; j<5; j++)
     {
-        var cell = row_revenue2.insertCell();
+        var cell = row_net.insertCell();
 
-        j == 0 ? (cell.innerHTML = "Gross Margin") : (cell.innerHTML = sorted_data[i].gross[j - 1] != 0 ? 
-        format(sorted_data[i].gross[j - 1]) : "-")
-    }
-
-    const row_revenue3 = tbody_revenue.insertRow()
-    for(let j = 0; j<5; j++)
-    {
-        var cell = row_revenue3.insertCell();
-
-        j == 0 ? (cell.innerHTML = "<b>Net Income</b>") : (cell.innerHTML = sorted_data[i].ut[j - 1] != 0 ? 
-        "<b>" + format(sorted_data[i].ut[j - 1]) + "</b>" : "-")   
+        j == 0 ? (cell.innerHTML = "Net Income") : (cell.innerHTML = sorted_data[i].net[j - 1] != 0 ? 
+        format(sorted_data[i].net[j - 1]) : "-")   
     }
 
     const row_gross_percent = tbody_grossmargin.insertRow()
     for(let j = 0; j<5; j++)
     {
         var cell = row_gross_percent.insertCell();
-        j == 0 ? (cell.innerHTML = "Gross Margin %") : cell.innerHTML = (sorted_data[i].gross[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].gross[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
+        j == 0 ? (cell.innerHTML = "<b>Gross Margin %</b>") : cell.innerHTML = (sorted_data[i].gross[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].gross[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
     }
 
     const row_profit_percent = tbody_grossmargin.insertRow()
     for(let j = 0; j<5; j++)
     {
         var cell = row_profit_percent.insertCell();
-        j == 0 ? (cell.innerHTML = "Profit Margin %") : cell.innerHTML = (sorted_data[i].ut[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].ut[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
+        j == 0 ? (cell.innerHTML = "<b>Profit Margin %</b>") : cell.innerHTML = (sorted_data[i].net[j-1] != 0 && sorted_data[i].rev[j-1] != 0) ? ((sorted_data[i].net[j-1] * 100) / sorted_data[i].rev[j-1]).toFixed(2) + " %" : "-"
     }
 
     const row_debt = tbody_debt.insertRow()
-    for(let j = 0; j<4; j++)
+    for(let j = 0; j<5; j++)
     {
         var cell = row_debt.insertCell();
-        cell.innerHTML = sorted_data[i].debt[j] != 0 ? format(sorted_data[i].debt[j]) : "-"
+        j == 0 ? (cell.innerHTML = "Long Term Debt") : cell.innerHTML = sorted_data[i].debt[j-1] != 0 ? format(sorted_data[i].debt[j-1]) : "-"
+    }
+
+    const row_debtequity = tbody_debt.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_debtequity.insertCell();
+        j == 0 ? (cell.innerHTML = "<b>Debt/Equity</b>") : cell.innerHTML = (sorted_data[i].debt[j-1] != 0 && sorted_data[i].equity[j-1] != 0) ? (sorted_data[i].debt[j-1] / sorted_data[i].equity[j-1]).toFixed(2) : "-"
+    }
+
+    const row_roe = tbody_returns.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_roe.insertCell();
+        j == 0 ? (cell.innerHTML = "<b>ROE</b>") : cell.innerHTML = (sorted_data[i].net[j-1] != 0 && sorted_data[i].equity[j-1] != 0) ? ((sorted_data[i].net[j-1] / sorted_data[i].equity[j-1]) * 100).toFixed(2) + " %" : "-"
+    }
+
+    const row_roi = tbody_returns.insertRow()
+    for(let j = 0; j<5; j++)
+    {
+        var cell = row_roi.insertCell();
+        j == 0 ? (cell.innerHTML = "<b>ROA</b>") : cell.innerHTML = (sorted_data[i].net[j-1] != 0 && sorted_data[i].invest[j-1] != 0) ? (sorted_data[i].net[j-1] / sorted_data[i].invest[j-1] * 100).toFixed(2) + " %" : "-"
     }
 
     modal_balance.style.visibility = "visible"
 }
 
-function format(v)
+function format(value)
 {
-    const value = Math.abs(v)
-    const new_value = value > 1000000000 ? (value / 1000000000).toFixed(2) + " B" : value > 1000000 ? (value / 1000000).toFixed(2) + " M" : (value / 1000).toFixed(2) + " K"
+    const new_value = Math.abs(value) > 1000000000 ? (value / 1000000000).toFixed(2) + " B" : Math.abs(value) > 1000000 ? (value / 1000000).toFixed(2) + " M" : (value / 1000).toFixed(2) + " K"
     return new_value
 }
 
