@@ -1,14 +1,16 @@
 #table {text-align: center; font-size: 12px; font-family: sans-serif}
-#table_revenue {text-align: center; font-size: 13px; font-family: sans-serif}
-#table_grossmargin {text-align: center; font-size: 13px; font-family: sans-serif}
-#table_debt {text-align: center; font-size: 13px; font-family: sans-serif}
+#table_revenue {text-align: center; font-size: 12px; font-family: sans-serif}
+#table_grossmargin {text-align: center; font-size: 12px; font-family: sans-serif}
+#table_debt {text-align: center; font-size: 12px; font-family: sans-serif}
+#table_returns {text-align: center; font-size: 12px; font-family: sans-serif}
 
 #table_crypto {text-align: center; font-size: 12px; font-family: sans-serif; position: sticky; top: -1}
 
 #table th{border: 1px solid grey; position: sticky; top: -1px}
 #table_revenue th{border: 1px solid grey}
 #table_grossmargin th{border: 1px solid grey}
-#table_debtequity th{border: 1px solid grey}
+#table_debt th{border: 1px solid grey}
+#table_returns th{border: 1px solid grey}
 
 td{border: 1px solid grey}
 
@@ -34,7 +36,7 @@ td{border: 1px solid grey}
 #modal_balance_content{
     background-color: white;
     width: 40%;
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 20px;
     border: 1px solid black;
 }
