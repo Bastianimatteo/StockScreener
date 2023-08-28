@@ -1,10 +1,10 @@
-#table {text-align: center; font-size: 12px; font-family: sans-serif}
+body{margin-left: 10%; margin-right: 10%}
+
+#table {text-align: center; font-size: 14px; font-family: arial}
 #table_revenue {text-align: center; font-size: 12px; font-family: sans-serif}
 #table_grossmargin {text-align: center; font-size: 12px; font-family: sans-serif}
 #table_debt {text-align: center; font-size: 12px; font-family: sans-serif}
 #table_returns {text-align: center; font-size: 12px; font-family: sans-serif}
-
-#table_crypto {text-align: center; font-size: 12px; font-family: sans-serif; position: sticky; top: -1}
 
 #table th{border: 1px solid grey; position: sticky; top: -1px}
 #table_revenue th{border: 1px solid grey}
@@ -14,12 +14,8 @@
 
 td{border: 1px solid grey}
 
-#body {display: flex; flex-wrap: wrap}
-
 #table td:first-child {font-weight: bold}
 #table td:last-child {font-weight: bold}
-#table_crypto td:first-child {font-weight: bold}
-#table_crypto td:last-child {font-weight: bold}
 
 .clickable {cursor:pointer}
 
