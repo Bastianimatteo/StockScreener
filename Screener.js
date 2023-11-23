@@ -1,9 +1,9 @@
-array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "FBK.MI", "STLAM.MI", 
-"AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "TM", "RACE", "GM", "NIO", "MU", "ASML", "NFLX", "QCOM", "RIVN", "RBLX", "NVDA", "U", "AMD", "META", "INTC", "PARA", "PYPL",
-"PLUG", "NKLA", "BLDP", "BE", "FCEL", "SPWR", "NEL.OL", "RUN", "CSIQ", "ENPH", "DQ", "FSLR", "SEDG", "JKS", "0916.HK",
+array = ["UCG.MI", "ISP.MI", "ENEL.MI", "ENI.MI", "LVMH.MI", "STLAM.MI", "VOW3.DE",
+"AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "TM", "NIO", "MU", "ASML", "NFLX", "RIVN", "NVDA", "U", "AMD", "META", "INTC", "PARA", "PYPL",
+"PLUG", "NKLA", "BLDP", "BE", "FCEL", "SPWR", "NEL.OL", "RUN", "CSIQ", "ENPH", "DQ", "FSLR", "SEDG", "VWS.CO", "JKS", "0916.HK", "3800.HK",
 "BYND", "BAC", "KO", "GS", "JPM", "CGC", "TSM", 
-"PFE", "SNY", "NVS", "JNJ", "BNTX", "MRNA", "NTLA", "BIIB", "GSK", "ROG.SW", "CRSP", "LLY", "MRK", "AZN", "ABBV", "PG", 
-"AEM", "PSA", "SBSW", "BTI", "OGI", "TLRY", "CRON", "VZ", "RYAAY", "BA", "AIR.PA"];
+"PFE", "BNTX", "MRNA", "ROG.SW", "PG", 
+"AEM", "PSA", "SBSW", "BTI", "VALE", "CTVA", "DG", "EVO.ST", "1EL.MI", "1ITX.MI"];
 
 var xhttp = [];
 
